@@ -1,0 +1,81 @@
+{
+  "menu": [
+
+    {
+      "name": "Dashboards",
+      "icon": "menu-icon tf-icons ti ti-smart-home",
+      "slug": "dashboard",
+      "submenu": [
+        {
+          "url": "rapport",
+          "name": "Rapports",
+          "slug": "dashboard-analytics"
+        }
+      ]
+    },
+    {
+      "name": "Adhérant",
+      "icon": "menu-icon tf-icons ti ti-users",
+      "slug": "adherant",
+      "submenu": [
+        {
+          "url": "adherant",
+          "name": "Liste des Adhérants",
+          "slug": "adherant-liste"
+        },
+        {
+          "url": "adherant/create",
+          "name": "Ajouter ",
+          "slug": "adherant-ajout"
+        }
+      ]
+    },
+    {
+      "name": "Transaction",
+      "icon": "menu-icon tf-icons ti ti-wallet",
+      "slug": "transaction",
+      "submenu": [
+        {
+          "url": "transaction",
+          "name": "Liste des Transactions",
+          "slug": "transaction-list"
+        },
+        {
+          "url": "transaction-list/create",
+          "name": "Ajouter une Transaction",
+          "slug": "transaction-create"
+        }
+      ]
+    },
+    {
+      "name": "Banques",
+      "icon": "menu-icon tf-icons ti ti-building-bank",
+      "slug": "banques",
+      "submenu": [
+        {
+          "url": "banques/create",
+          "name": "Ajouter une banque",
+          "slug": "banques-ajout"
+        },
+        {
+          "url": "banques",
+          "name": "Liste des Banques",
+          "slug": "banques-liste"
+        }
+      ]
+    },
+    {
+      "name": "Utilisateurs",
+      "icon": "menu-icon tf-icons ti ti-brand-php",
+      "slug": "laravel-example",
+      "submenu": [
+        {
+          "url": "laravel/user-management",
+          "name": "Gestion des Utilisateurs",
+          "slug": "laravel-example-user-management"
+        }
+      ]
+    }
+
+  ]
+}
