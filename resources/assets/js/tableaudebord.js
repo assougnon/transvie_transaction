@@ -616,8 +616,7 @@ $.ajax({
   success: function(res) {
     return res ;
   }
-}).then((res)=>
-{
+}).then((res)=>{
 
    donutChartEl = document.querySelector('#donutChart');
    let donutChartConfig = {
