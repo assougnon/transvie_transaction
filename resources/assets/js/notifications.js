@@ -13,7 +13,7 @@ const notificationsCountElem = notificationsToggle.find('span[data-count]');
 
 Echo.channel('transaction-created')
   .listen('.transaction.created', (event) => {
-    console.log(event);
+
     var existingNotifications = notifications.html();
     var newNotificationHtml = `
           <li class="list-group-item list-group-item-action dropdown-notifications-item">

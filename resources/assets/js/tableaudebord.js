@@ -123,9 +123,13 @@ Echo.channel('transaction-created')
       }
     });
 
+    /*
+    Mise a jour des données analytiques du senegal
+    montant Encours, payées, et impayées quand une transaction est crée
+    **/
     $.ajax({
       type: 'GET',
-      url: `${baseUrl}statistiques/pays`,
+      url: `${baseUrl}statistiques/pays/1`,
       success: function(res) {
 
         barChart.updateOptions({
@@ -221,20 +225,176 @@ Echo.channel('transaction-created')
           }
         }
 
-        ,false,true);
+        ,false,true);}
+    });
 
+    /*
+    Mise à jour du donut Chart lors de la création d'une transaction
+    */
+    $.ajax({
+      type:'GET',
+      url:`${baseUrl}statistiques/mois/1`,
+      success: function(res) {
+        console.log('mise a jour du donut lors de la creation d une transaction');
+        donutChart.updateOptions({
+          chart: {
+            height: 390,
+            type: 'donut'
+          },
+          labels: ['Encours', 'Impayées', 'Terminées'],
+          series: [res.encours, res.impayee, res.terminee],
+          colors: [
+            chartColors.donut.series1,
+            chartColors.donut.series4,
+            chartColors.donut.series3,
+          ],
+          stroke: {
+            show: false,
+            curve: 'straight'
+          },
+          dataLabels: {
+            enabled: true,
+            formatter: function (val, opt) {
 
+              return val.toFixed(2) + '%';
+            }
+          },
+
+          legend: {
+            show: true,
+            position: 'bottom',
+            markers: { offsetX: -3 },
+            itemMargin: {
+              vertical: 3,
+              horizontal: 10
+            },
+            labels: {
+              colors: legendColor,
+              useSeriesColors: false
+            }
+          },
+          plotOptions: {
+            pie: {
+              donut: {
+                labels: {
+                  show: true,
+                  name: {
+                    fontSize: '2rem',
+                    fontFamily: 'Public Sans',
+
+                  },
+                  value: {
+                    fontSize: '1.2rem',
+                    color: legendColor,
+                    fontFamily: 'Public Sans',
+                    formatter: function (val) {
+                      return  fm.from(parseInt(val, 10)) + ' CFA';
+                    }
+                  },
+                  total: {
+                    show: true,
+                    fontSize: '1.5rem',
+                    color: headingColor,
+                    label: 'TOTAL ',
+                    formatter: function (w) {
+                      let total =w.globals.seriesTotals.reduce((a, b) => {
+                        return a + b
+                      }, 0)
+                      return fm.from(total)+' CFA';
+                    }
+                  }
+                }
+              }
+            }
+          },
+          responsive: [
+            {
+              breakpoint: 992,
+              options: {
+                chart: {
+                  height: 380
+                },
+                legend: {
+                  position: 'bottom',
+                  labels: {
+                    colors: legendColor,
+                    useSeriesColors: false
+                  }
+                }
+              }
+            },
+            {
+              breakpoint: 576,
+              options: {
+                chart: {
+                  height: 320
+                },
+                plotOptions: {
+                  pie: {
+                    donut: {
+                      labels: {
+                        show: true,
+                        name: {
+                          fontSize: '1.5rem'
+                        },
+                        value: {
+                          fontSize: '1rem'
+                        },
+                        total: {
+                          fontSize: '1.5rem'
+                        }
+                      }
+                    }
+                  }
+                },
+                legend: {
+                  position: 'bottom',
+                  labels: {
+                    colors: legendColor,
+                    useSeriesColors: false
+                  }
+                }
+              }
+            },
+            {
+              breakpoint: 420,
+              options: {
+                chart: {
+                  height: 280
+                },
+                legend: {
+                  show: false
+                }
+              }
+            },
+            {
+              breakpoint: 360,
+              options: {
+                chart: {
+                  height: 250
+                },
+                legend: {
+                  show: false
+                }
+              }
+            }
+          ]
+        }, false, true);
       }
-
     });
   });
 
 Echo.channel('transaction-updated')
   .listen('.transaction.updated',(event)=>{
-  console.log('transaction updated');
+
+
+    /*
+   Mise a jour des données analytiques du senegal
+   montant Encours, payées, et impayées quand une transaction est mise à jour
+   **/
   $.ajax({
     type: 'GET',
-    url: `${baseUrl}statistiques/pays`,
+    url: `${baseUrl}statistiques/pays/1`,
     success: function(res) {
 
       barChart.updateOptions({
@@ -331,11 +491,9 @@ Echo.channel('transaction-updated')
         }
 
         ,false,true);
-
-
     }
-
   });
+
     $.ajax({
       type:'GET',
       url:`${baseUrl}statistiques/mois/1`,
@@ -492,23 +650,24 @@ Echo.channel('transaction-updated')
 
 let senegalMois, senegalMontant, senegalPayees,senegalImpayees;
 
+/*
+ Création des données analytiques du senegal
+   montant Encours, payées, et impayées
 
+   */
 $.ajax({
   type: 'GET',
-  url: `${baseUrl}statistiques/pays`,
+  url: `${baseUrl}statistiques/pays/1`,
   success: function(res) {
     senegalMois = res.senegalMois;
     senegalMontant = res.senegalMontant;
     senegalPayees = res.senegalPayee;
     senegalImpayees = res.senegalImpayee;
-
-
-
   }
 
 })
   .then(()=>{
-
+    console.log('barchat');
 
     barChartConfig = {
       chart: {
@@ -603,6 +762,7 @@ $.ajax({
       }
     };
     if (typeof barChartEl !== undefined && barChartEl !== null) {
+
       barChart = new ApexCharts(barChartEl, barChartConfig);
       barChart.render();
     }
@@ -616,7 +776,8 @@ $.ajax({
   success: function(res) {
     return res ;
   }
-}).then((res)=>{
+})
+  .then((res)=>{
 
    donutChartEl = document.querySelector('#donutChart');
    let donutChartConfig = {
