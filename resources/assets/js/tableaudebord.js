@@ -669,7 +669,8 @@ $.ajax({
   .then(()=>{
     console.log('barchat');
 
-    barChartConfig = {
+    barChartConfig =
+      {
       chart: {
         height: 400,
         type: 'bar',
@@ -932,63 +933,116 @@ $.ajax({
 
 $.ajax({
   type:'GET',
-  url:`${baseUrl}statistiques/chaque`,
+  url:`${baseUrl}statistiques/agence/senegal`,
   success: function(res) {
 
     return res;
   }
 }).then((res)=>{
-  var options = {
-    series: [{
-      name: 'Payées',
-      data: res.montant,
-
-    }],
-    chart: {
-      type: 'bar',
-      height: 350,
-
-      //
-    },
-    plotOptions: {
-      bar: {
-        borderRadius: 10,
-        borderRadiusApplication: 'end',
-        horizontal: true,
+  var options =
+    {
+      chart: {
+        height: 500,
+        type: 'bar',
+        stacked: false,
+        parentHeightOffset: 0,
+        toolbar: {
+          show: true,
+          zoom: true,
+          zoomin: true,
+          zoomout: true,
+        },
 
       },
+      plotOptions: {
+        bar: {
+          columnWidth: '35%',
+          dataLabels: {
+            position: 'top'
+          }
 
-    },
-    dataLabels: {
-      enabled: true,
-      hideOverflowingLabels: true,
-      formatter: function (value) {
-        return fm.from(value)+' CFA';
+        }
       },
-
-    },
-    xaxis: {
-      categories: res.agences,
-      labels: {
-        formatter: function (value) {
-          return fm.from(value)+' CFA';
+      dataLabels: {
+        enabled: false
+      },
+      legend: {
+        show: true,
+        position: 'top',
+        horizontalAlign: 'start',
+        labels: {
+          colors: legendColor,
+          useSeriesColors: true
         }
-      }
-    },
-    yaxis: {
-
-    },
-    colors: chartColors.column.series1,
-    tooltip: {
-      y: {
-        formatter: function (value) {
-          return fm.from(value)+' CFA';
+      },
+      colors: [config.colors.primary, config.colors.success, config.colors.warning],
+      stroke: {
+        show: true,
+        colors: ['transparent']
+      },
+      grid: {
+        borderColor: borderColor,
+        xaxis: {
+          lines: {
+            show: true
+          }
         }
+      },
+      series: [
+        {
+          name: 'Encours',
+          data: res.montantE
+        },
+        {
+          name: 'Payées',
+          data: res.montantT
+        },
+        {
+          name: 'Impayées',
+          data: res.montantI
+        }
+      ],
+      xaxis: {
+        categories: res.agences,
+        axisBorder: {
+          show: false
+        },
+        axisTicks: {
+          show: false
+        },
+        labels: {
+          style: {
+            colors: labelColor,
+            fontSize: '13px'
+          }
+        }
+      },
+      yaxis: {
+        labels: {
+          style: {
+            colors: labelColor,
+            fontSize: '13px'
+          },
+          formatter: function (value) {
+            return fm.from(value)+' CFA';
+          }
+        }
+      },
+      fill: {
+        opacity: 1
       }
-    }
-  };
+    };
 
   var chart = new ApexCharts(document.querySelector("#agenceChart"), options);
   chart.render();
 });
 
+//données statisques des agences par mois
+$.ajax({
+  type: 'GET',
+  url : `${baseUrl}statistiques/agence/senegal`,
+  success: function(res) {
+
+   console.log(res);
+  }
+})

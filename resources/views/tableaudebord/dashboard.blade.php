@@ -123,6 +123,17 @@
       </div>
     </div>
   </div>
+  <div class="col-12 ">
+    <div class="card">
+      <div class="card-header d-flex justify-content-between align-items-md-center align-items-start">
+        <h5 class="card-title mb-0">Répartition des données par Agence (SÉNÉGAL) </h5>
+
+      </div>
+      <div class="card-body">
+        <div id="agenceChart"></div>
+      </div>
+    </div>
+  </div>
   <div class="col-xl-4 col-md-6 mt-3   order-1 order-xl-0">
     <div class="card h-100">
       <div class="card-header d-flex justify-content-between">
@@ -214,17 +225,7 @@
       </div>
     </div>
   </div>
-  <div class="col-12 col-xl-8">
-    <div class="card">
-      <div class="card-header d-flex justify-content-between align-items-md-center align-items-start">
-        <h5 class="card-title mb-0">Transactions Terminées: Répartition par Agence </h5>
 
-      </div>
-      <div class="card-body">
-        <div id="horizontalBarChart"></div>
-      </div>
-    </div>
-  </div>
 
 
 

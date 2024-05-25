@@ -416,7 +416,7 @@ Route::get('rapport',[DashboardController::class,'index']);
 Route::get('montant/pays',[DashboardController::class,'transactionPays']);
 Route::get('statistiques/pays/{pays}',[DashboardController::class,'statistiques']);
 Route::get('statistiques/mois/{mois}',[DashboardController::class,'donutData']);
-Route::get('statistiques/chaque',[DashboardController::class,'montantDeChaqueAgence']);
+Route::get('statistiques/agence/senegal',[DashboardController::class,'montantDeChaqueAgence']);
 
 Route::get('register', [RegisteredUserController::class, 'create'])
   ->middleware(['auth'])

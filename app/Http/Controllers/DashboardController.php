@@ -169,9 +169,33 @@ class DashboardController extends Controller
 
   public function montantDeChaqueAgence()
   {
-    $transactionsByAgency = DB::table('transactions')
+    //on recupère toutes les transactions en Terminée
+
+    $transactionsTerminee = DB::table('transactions')
       ->where('pays_id', 1)
       ->where('statut', 'Terminee')
+      ->whereMonth('created_at', Carbon::now()->month)
+      ->whereYear('created_at', Carbon::now()->year)
+      ->select('agence_id', DB::raw('SUM(montant) as total_amount'))
+      ->groupBy('agence_id')
+      ->get()
+      ->keyBy('agence_id');
+
+    //on recupère toutes les transactions en cours
+
+    $transactionsEncours= DB::table('transactions')
+      ->where('pays_id', 1)
+      ->where('statut', 'Encours')
+      ->whereMonth('created_at', Carbon::now()->month)
+      ->whereYear('created_at', Carbon::now()->year)
+      ->select('agence_id', DB::raw('SUM(montant) as total_amount'))
+      ->groupBy('agence_id')
+      ->get()
+      ->keyBy('agence_id');
+
+    $transactionsImpayees= DB::table('transactions')
+      ->where('pays_id', 1)
+      ->where('statut', 'Impayee')
       ->whereMonth('created_at', Carbon::now()->month)
       ->whereYear('created_at', Carbon::now()->year)
       ->select('agence_id', DB::raw('SUM(montant) as total_amount'))
@@ -186,20 +210,27 @@ class DashboardController extends Controller
       ->toArray();
 
 // Créer un tableau pour stocker les résultats finaux
-    $resultMontant = [];
+    $montantTerminee = [];
+    $montantEncours = [];
+    $montantImpayee = [];
     $agences = [];
 
 // Parcourir toutes les agences
     foreach ($agencies as $agencyId => $item) {
       // Si l'agence a des transactions, récupérer le montant total, sinon le mettre à zéro
-      $totalAmount = isset($transactionsByAgency[$agencyId]) ? $transactionsByAgency[$agencyId]->total_amount : 0;
-
+      $totalAmountT = isset($transactionsTerminee[$agencyId]) ? $transactionsTerminee[$agencyId]->total_amount : 0;
+      $totalAmountE = isset($transactionsEncours[$agencyId]) ? $transactionsEncours[$agencyId]->total_amount : 0 ;
+      $totalAmountI = isset($transactionsImpayees[$agencyId]) ? $transactionsImpayees[$agencyId]->total_amount : 0 ;
       // Stocker le résultat dans le tableau final
-      $resultMontant[] = $totalAmount;
+      $montantTerminee[] = $totalAmountT;
+      $montantEncours[] = $totalAmountE;
+      $montantImpayee[] = $totalAmountI;
       $agences [] = $item;
     }
     return response()->json([
-      'montant' => $resultMontant,
+      'montantT' => $montantTerminee,
+      'montantE' => $montantEncours,
+      'montantI' => $montantImpayee,
       'agences' => $agences
     ]);
   }

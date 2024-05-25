@@ -21,8 +21,8 @@ class AppServiceProvider extends ServiceProvider
    */
   public function boot(): void
   {
-
-    Carbon::setLocale('fr');
+    \Carbon\Carbon::setLocale('fr');
+  //  Carbon::setLocale('fr');
     Blade::directive('money',function ($number){
      $valeur =  $number;
         return "<?php echo number_format($valeur, 0, ',', ' ')?>";
