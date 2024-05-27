@@ -1,7 +1,7 @@
 let senegalContenaire = $('#montantSenegal');
 const barChartEl = document.querySelector('#barChart');
 let donutChartEl = document.querySelector('#donutChart');
-let  barChartConfig, barChart, donutChart;
+let  barChartConfig, barChart, donutChart, chartAgences;
 let cardColor, headingColor, labelColor, borderColor, legendColor;
 
 if (isDarkStyle) {
@@ -61,7 +61,6 @@ let nombreSn, nombreTg, nombreGb, nombreCi, nombreBn;
 
 Echo.channel('transaction-created')
   .listen('.transaction.created', (event) => {
-
     $.ajax({
       type: 'GET',
       url: `${baseUrl}montant/pays`,
@@ -127,523 +126,33 @@ Echo.channel('transaction-created')
     Mise a jour des données analytiques du senegal
     montant Encours, payées, et impayées quand une transaction est crée
     **/
-    $.ajax({
-      type: 'GET',
-      url: `${baseUrl}statistiques/pays/1`,
-      success: function(res) {
 
-        barChart.updateOptions({
-          chart: {
-            height: 400,
-              type: 'bar',
-              stacked: false,
-              parentHeightOffset: 0,
-              toolbar: {
-              show: true,
-                zoom: true,
-                zoomin: true,
-                zoomout: true,
-            },
 
-          },
-          plotOptions: {
-            bar: {
-              columnWidth: '35%',
-                dataLabels: {
-                position: 'top'
-              }
-
-            }
-          },
-          dataLabels: {
-            enabled: false
-          },
-          legend: {
-            show: true,
-              position: 'top',
-              horizontalAlign: 'start',
-              labels: {
-              colors: legendColor,
-                useSeriesColors: true
-            }
-          },
-          colors: [chartColors.column.series1, chartColors.column.series2, chartColors.column.series3],
-            stroke: {
-          show: true,
-            colors: ['transparent']
-        },
-          grid: {
-            borderColor: borderColor,
-              xaxis: {
-              lines: {
-                show: true
-              }
-            }
-          },
-          series: [
-            {
-              name: 'Encours',
-              data: res.senegalMontant
-            },
-            {
-              name: 'Payées',
-              data: res.senegalPayee
-            },
-            {
-              name: 'Impayées',
-              data: res.senegalImpayee
-            }
-          ],
-            xaxis: {
-          categories: res.senegalMois,
-            axisBorder: {
-            show: false
-          },
-          axisTicks: {
-            show: false
-          },
-          labels: {
-            style: {
-              colors: labelColor,
-                fontSize: '13px'
-            }
-          }
-        },
-          yaxis: {
-            labels: {
-              style: {
-                colors: labelColor,
-                  fontSize: '13px'
-              },
-              formatter: function (value) {
-                return fm.from(value)+' CFA';
-              }
-            }
-          },
-          fill: {
-            opacity: 1
-          }
-        }
-
-        ,false,true);}
-    });
+    statistiqueMoiSenegalBar();
 
     /*
     Mise à jour du donut Chart lors de la création d'une transaction
     */
-    $.ajax({
-      type:'GET',
-      url:`${baseUrl}statistiques/mois/1`,
-      success: function(res) {
-        console.log('mise a jour du donut lors de la creation d une transaction');
-        donutChart.updateOptions({
-          chart: {
-            height: 390,
-            type: 'donut'
-          },
-          labels: ['Encours', 'Impayées', 'Terminées'],
-          series: [res.encours, res.impayee, res.terminee],
-          colors: [
-            chartColors.donut.series1,
-            chartColors.donut.series4,
-            chartColors.donut.series3,
-          ],
-          stroke: {
-            show: false,
-            curve: 'straight'
-          },
-          dataLabels: {
-            enabled: true,
-            formatter: function (val, opt) {
+    statistiqueMoisSenegal();
 
-              return val.toFixed(2) + '%';
-            }
-          },
-
-          legend: {
-            show: true,
-            position: 'bottom',
-            markers: { offsetX: -3 },
-            itemMargin: {
-              vertical: 3,
-              horizontal: 10
-            },
-            labels: {
-              colors: legendColor,
-              useSeriesColors: false
-            }
-          },
-          plotOptions: {
-            pie: {
-              donut: {
-                labels: {
-                  show: true,
-                  name: {
-                    fontSize: '2rem',
-                    fontFamily: 'Public Sans',
-
-                  },
-                  value: {
-                    fontSize: '1.2rem',
-                    color: legendColor,
-                    fontFamily: 'Public Sans',
-                    formatter: function (val) {
-                      return  fm.from(parseInt(val, 10)) + ' CFA';
-                    }
-                  },
-                  total: {
-                    show: true,
-                    fontSize: '1.5rem',
-                    color: headingColor,
-                    label: 'TOTAL ',
-                    formatter: function (w) {
-                      let total =w.globals.seriesTotals.reduce((a, b) => {
-                        return a + b
-                      }, 0)
-                      return fm.from(total)+' CFA';
-                    }
-                  }
-                }
-              }
-            }
-          },
-          responsive: [
-            {
-              breakpoint: 992,
-              options: {
-                chart: {
-                  height: 380
-                },
-                legend: {
-                  position: 'bottom',
-                  labels: {
-                    colors: legendColor,
-                    useSeriesColors: false
-                  }
-                }
-              }
-            },
-            {
-              breakpoint: 576,
-              options: {
-                chart: {
-                  height: 320
-                },
-                plotOptions: {
-                  pie: {
-                    donut: {
-                      labels: {
-                        show: true,
-                        name: {
-                          fontSize: '1.5rem'
-                        },
-                        value: {
-                          fontSize: '1rem'
-                        },
-                        total: {
-                          fontSize: '1.5rem'
-                        }
-                      }
-                    }
-                  }
-                },
-                legend: {
-                  position: 'bottom',
-                  labels: {
-                    colors: legendColor,
-                    useSeriesColors: false
-                  }
-                }
-              }
-            },
-            {
-              breakpoint: 420,
-              options: {
-                chart: {
-                  height: 280
-                },
-                legend: {
-                  show: false
-                }
-              }
-            },
-            {
-              breakpoint: 360,
-              options: {
-                chart: {
-                  height: 250
-                },
-                legend: {
-                  show: false
-                }
-              }
-            }
-          ]
-        }, false, true);
-      }
-    });
+    //Mise à jour du graphiques des agences lors de la création d'une transaction
+   updateAgenceChart();
   });
 
 Echo.channel('transaction-updated')
   .listen('.transaction.updated',(event)=>{
 
 
+    statistiqueMoisSenegal();
     /*
    Mise a jour des données analytiques du senegal
    montant Encours, payées, et impayées quand une transaction est mise à jour
    **/
-  $.ajax({
-    type: 'GET',
-    url: `${baseUrl}statistiques/pays/1`,
-    success: function(res) {
+    statistiqueMoiSenegalBar();
 
-      barChart.updateOptions({
-          chart: {
-            height: 400,
-            type: 'bar',
-            stacked: false,
-            parentHeightOffset: 0,
-            toolbar: {
-              show: true,
-              zoom: true,
-              zoomin: true,
-              zoomout: true,
-            },
 
-          },
-          plotOptions: {
-            bar: {
-              columnWidth: '35%',
-              dataLabels: {
-                position: 'top'
-              }
-
-            }
-          },
-          dataLabels: {
-            enabled: false
-          },
-          legend: {
-            show: true,
-            position: 'top',
-            horizontalAlign: 'start',
-            labels: {
-              colors: legendColor,
-              useSeriesColors: true
-            }
-          },
-          colors: [chartColors.column.series1, chartColors.column.series2, chartColors.column.series3],
-          stroke: {
-            show: true,
-            colors: ['transparent']
-          },
-          grid: {
-            borderColor: borderColor,
-            xaxis: {
-              lines: {
-                show: true
-              }
-            }
-          },
-          series: [
-            {
-              name: 'Encours',
-              data: res.senegalMontant
-            },
-            {
-              name: 'Payées',
-              data: res.senegalPayee
-            },
-            {
-              name: 'Impayées',
-              data: res.senegalImpayee
-            }
-          ],
-          xaxis: {
-            categories: res.senegalMois,
-            axisBorder: {
-              show: false
-            },
-            axisTicks: {
-              show: false
-            },
-            labels: {
-              style: {
-                colors: labelColor,
-                fontSize: '13px'
-              }
-            }
-          },
-          yaxis: {
-            labels: {
-              style: {
-                colors: labelColor,
-                fontSize: '13px'
-              },
-              formatter: function (value) {
-                return fm.from(value)+' CFA';
-              }
-            }
-          },
-          fill: {
-            opacity: 1
-          }
-        }
-
-        ,false,true);
-    }
-  });
-
-    $.ajax({
-      type:'GET',
-      url:`${baseUrl}statistiques/mois/1`,
-      success: function(res) {
-        donutChart.updateOptions( {
-          chart: {
-            height: 390,
-            type: 'donut'
-          },
-          labels: ['Encours', 'Impayées', 'Terminées'],
-          series: [res.encours, res.impayee, res.terminee],
-          colors: [
-            chartColors.donut.series1,
-            chartColors.donut.series4,
-            chartColors.donut.series3,
-          ],
-          stroke: {
-            show: false,
-            curve: 'straight'
-          },
-          dataLabels: {
-            enabled: true,
-            formatter: function (val, opt) {
-
-              return val.toFixed(2) + '%';
-            }
-          },
-
-          legend: {
-            show: true,
-            position: 'bottom',
-            markers: { offsetX: -3 },
-            itemMargin: {
-              vertical: 3,
-              horizontal: 10
-            },
-            labels: {
-              colors: legendColor,
-              useSeriesColors: false
-            }
-          },
-          plotOptions: {
-            pie: {
-              donut: {
-                labels: {
-                  show: true,
-                  name: {
-                    fontSize: '2rem',
-                    fontFamily: 'Public Sans',
-
-                  },
-                  value: {
-                    fontSize: '1.2rem',
-                    color: legendColor,
-                    fontFamily: 'Public Sans',
-                    formatter: function (val) {
-                      return  fm.from(parseInt(val, 10)) + ' CFA';
-                    }
-                  },
-                  total: {
-                    show: true,
-                    fontSize: '1.5rem',
-                    color: headingColor,
-                    label: 'TOTAL ',
-                    formatter: function (w) {
-                      let total =w.globals.seriesTotals.reduce((a, b) => {
-                        return a + b
-                      }, 0)
-                      return fm.from(total)+' CFA';
-                    }
-                  }
-                }
-              }
-            }
-          },
-          responsive: [
-            {
-              breakpoint: 992,
-              options: {
-                chart: {
-                  height: 380
-                },
-                legend: {
-                  position: 'bottom',
-                  labels: {
-                    colors: legendColor,
-                    useSeriesColors: false
-                  }
-                }
-              }
-            },
-            {
-              breakpoint: 576,
-              options: {
-                chart: {
-                  height: 320
-                },
-                plotOptions: {
-                  pie: {
-                    donut: {
-                      labels: {
-                        show: true,
-                        name: {
-                          fontSize: '1.5rem'
-                        },
-                        value: {
-                          fontSize: '1rem'
-                        },
-                        total: {
-                          fontSize: '1.5rem'
-                        }
-                      }
-                    }
-                  }
-                },
-                legend: {
-                  position: 'bottom',
-                  labels: {
-                    colors: legendColor,
-                    useSeriesColors: false
-                  }
-                }
-              }
-            },
-            {
-              breakpoint: 420,
-              options: {
-                chart: {
-                  height: 280
-                },
-                legend: {
-                  show: false
-                }
-              }
-            },
-            {
-              breakpoint: 360,
-              options: {
-                chart: {
-                  height: 250
-                },
-                legend: {
-                  show: false
-                }
-              }
-            }
-          ]
-        }, false, true);
-      }
-    });
+//Mise à jour du graphiques des agences lors de la mise à jour d'une transaction
+    updateAgenceChart();
 
 });
 
@@ -667,8 +176,6 @@ $.ajax({
 
 })
   .then(()=>{
-    console.log('barchat');
-
     barChartConfig =
       {
       chart: {
@@ -1033,8 +540,9 @@ $.ajax({
       }
     };
 
-  var chart = new ApexCharts(document.querySelector("#agenceChart"), options);
-  chart.render();
+  chartAgences = new ApexCharts(document.querySelector("#agenceChart"), options);
+
+  chartAgences.render();
 });
 
 //données statisques des agences par mois
@@ -1046,3 +554,379 @@ $.ajax({
    console.log(res);
   }
 })
+
+function updateAgenceChart(){
+
+  $.ajax({
+    type:'GET',
+    url:`${baseUrl}statistiques/agence/senegal`,
+    success: function(res) {
+
+      return res;
+    }
+  }).then((res)=>{
+    chartAgences.updateOptions({
+      chart: {
+        height: 500,
+        type: 'bar',
+        stacked: false,
+        parentHeightOffset: 0,
+        toolbar: {
+          show: true,
+          zoom: true,
+          zoomin: true,
+          zoomout: true,
+        },
+
+      },
+      plotOptions: {
+        bar: {
+          columnWidth: '35%',
+          dataLabels: {
+            position: 'top'
+          }
+
+        }
+      },
+      dataLabels: {
+        enabled: false
+      },
+      legend: {
+        show: true,
+        position: 'top',
+        horizontalAlign: 'start',
+        labels: {
+          colors: legendColor,
+          useSeriesColors: true
+        }
+      },
+      colors: [config.colors.primary, config.colors.success, config.colors.warning],
+      stroke: {
+        show: true,
+        colors: ['transparent']
+      },
+      grid: {
+        borderColor: borderColor,
+        xaxis: {
+          lines: {
+            show: true
+          }
+        }
+      },
+      series: [
+        {
+          name: 'Encours',
+          data: res.montantE
+        },
+        {
+          name: 'Payées',
+          data: res.montantT
+        },
+        {
+          name: 'Impayées',
+          data: res.montantI
+        }
+      ],
+      xaxis: {
+        categories: res.agences,
+        axisBorder: {
+          show: false
+        },
+        axisTicks: {
+          show: false
+        },
+        labels: {
+          style: {
+            colors: labelColor,
+            fontSize: '13px'
+          }
+        }
+      },
+      yaxis: {
+        labels: {
+          style: {
+            colors: labelColor,
+            fontSize: '13px'
+          },
+          formatter: function (value) {
+            return fm.from(value)+' CFA';
+          }
+        }
+      },
+      fill: {
+        opacity: 1
+      }
+    }, false, true);
+  });
+}
+function statistiqueMoisSenegal(){
+  $.ajax({
+    type:'GET',
+    url:`${baseUrl}statistiques/mois/1`,
+    success: function(res) {
+      donutChart.updateOptions( {
+        chart: {
+          height: 390,
+          type: 'donut'
+        },
+        labels: ['Encours', 'Impayées', 'Terminées'],
+        series: [res.encours, res.impayee, res.terminee],
+        colors: [
+          chartColors.donut.series1,
+          chartColors.donut.series4,
+          chartColors.donut.series3,
+        ],
+        stroke: {
+          show: false,
+          curve: 'straight'
+        },
+        dataLabels: {
+          enabled: true,
+          formatter: function (val, opt) {
+
+            return val.toFixed(2) + '%';
+          }
+        },
+
+        legend: {
+          show: true,
+          position: 'bottom',
+          markers: { offsetX: -3 },
+          itemMargin: {
+            vertical: 3,
+            horizontal: 10
+          },
+          labels: {
+            colors: legendColor,
+            useSeriesColors: false
+          }
+        },
+        plotOptions: {
+          pie: {
+            donut: {
+              labels: {
+                show: true,
+                name: {
+                  fontSize: '2rem',
+                  fontFamily: 'Public Sans',
+
+                },
+                value: {
+                  fontSize: '1.2rem',
+                  color: legendColor,
+                  fontFamily: 'Public Sans',
+                  formatter: function (val) {
+                    return  fm.from(parseInt(val, 10)) + ' CFA';
+                  }
+                },
+                total: {
+                  show: true,
+                  fontSize: '1.5rem',
+                  color: headingColor,
+                  label: 'TOTAL ',
+                  formatter: function (w) {
+                    let total =w.globals.seriesTotals.reduce((a, b) => {
+                      return a + b
+                    }, 0)
+                    return fm.from(total)+' CFA';
+                  }
+                }
+              }
+            }
+          }
+        },
+        responsive: [
+          {
+            breakpoint: 992,
+            options: {
+              chart: {
+                height: 380
+              },
+              legend: {
+                position: 'bottom',
+                labels: {
+                  colors: legendColor,
+                  useSeriesColors: false
+                }
+              }
+            }
+          },
+          {
+            breakpoint: 576,
+            options: {
+              chart: {
+                height: 320
+              },
+              plotOptions: {
+                pie: {
+                  donut: {
+                    labels: {
+                      show: true,
+                      name: {
+                        fontSize: '1.5rem'
+                      },
+                      value: {
+                        fontSize: '1rem'
+                      },
+                      total: {
+                        fontSize: '1.5rem'
+                      }
+                    }
+                  }
+                }
+              },
+              legend: {
+                position: 'bottom',
+                labels: {
+                  colors: legendColor,
+                  useSeriesColors: false
+                }
+              }
+            }
+          },
+          {
+            breakpoint: 420,
+            options: {
+              chart: {
+                height: 280
+              },
+              legend: {
+                show: false
+              }
+            }
+          },
+          {
+            breakpoint: 360,
+            options: {
+              chart: {
+                height: 250
+              },
+              legend: {
+                show: false
+              }
+            }
+          }
+        ]
+      }, false, true);
+    }
+  });
+}
+
+function statistiqueMoiSenegalBar(){
+  $.ajax({
+    type: 'GET',
+    url: `${baseUrl}statistiques/pays/1`,
+    success: function(res) {
+      senegalMois = res.senegalMois;
+      senegalMontant = res.senegalMontant;
+      senegalPayees = res.senegalPayee;
+      senegalImpayees = res.senegalImpayee;
+    }
+
+  })
+    .then(()=>{
+      barChartConfig =
+        {
+          chart: {
+            height: 400,
+            type: 'bar',
+            stacked: false,
+            parentHeightOffset: 0,
+            toolbar: {
+              show: true,
+              zoom: true,
+              zoomin: true,
+              zoomout: true,
+            },
+
+          },
+          plotOptions: {
+            bar: {
+              columnWidth: '35%',
+              dataLabels: {
+                position: 'top'
+              }
+
+            }
+          },
+          dataLabels: {
+            enabled: false
+          },
+          legend: {
+            show: true,
+            position: 'top',
+            horizontalAlign: 'start',
+            labels: {
+              colors: legendColor,
+              useSeriesColors: true
+            }
+          },
+          colors: [chartColors.column.series1, chartColors.column.series2, chartColors.column.series3],
+          stroke: {
+            show: true,
+            colors: ['transparent']
+          },
+          grid: {
+            borderColor: borderColor,
+            xaxis: {
+              lines: {
+                show: true
+              }
+            }
+          },
+          series: [
+            {
+              name: 'Encours',
+              data: senegalMontant
+            },
+            {
+              name: 'Payées',
+              data: senegalPayees
+            },
+            {
+              name: 'Impayées',
+              data: senegalImpayees
+            }
+          ],
+          xaxis: {
+            categories: senegalMois,
+            axisBorder: {
+              show: false
+            },
+            axisTicks: {
+              show: false
+            },
+            labels: {
+              style: {
+                colors: labelColor,
+                fontSize: '13px'
+              }
+            }
+          },
+          yaxis: {
+            labels: {
+              style: {
+                colors: labelColor,
+                fontSize: '13px'
+              },
+              formatter: function (value) {
+                return fm.from(value)+' CFA';
+              }
+            }
+          },
+          fill: {
+            opacity: 1
+          }
+        };
+      if (typeof barChartEl !== undefined && barChartEl !== null) {
+
+        barChart = new ApexCharts(barChartEl, barChartConfig);
+        barChart.render();
+      }
+
+    });
+}
+
+function montantGlobalPays(){
+
+}
