@@ -954,6 +954,5 @@ $.ajax({
     }
 
 
-    console.log(res);
   }
 })
