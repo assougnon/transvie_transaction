@@ -1,5 +1,6 @@
 let senegalContenaire = $('#montantSenegal');
 const barChartEl = document.querySelector('#barChart');
+
 let donutChartEl = document.querySelector('#donutChart');
 let  barChartConfig, barChart, donutChart, chartAgences;
 let cardColor, headingColor, labelColor, borderColor, legendColor;
@@ -926,7 +927,33 @@ function statistiqueMoiSenegalBar(){
 
     });
 }
+$.ajax({
+  type: 'GET',
+  url: `${baseUrl}statistiques/banque/1`,
+  success: function(res){
 
-function montantGlobalPays(){
 
-}
+    const banqueSenegal = document.getElementById("banquesenegal");
+
+    for(let i= 0; i < res.transaction.length; i++){
+           let montant = res.transaction[i].total_amount;
+
+
+
+      let element = '<div class="col-12 col-sm-4">'+
+        '<div class="d-flex gap-2 align-items-center">'+
+        '<div class="badge rounded bg-label-primary p-1"><img  height="40" class=" rounded" src="'+res.transaction[i].banque.image_url+'" alt=""></div>'+
+        '<h6 class="mb-0">'+res.transaction[i].banque.nom+'</h6>'+
+        '</div>'+
+        '<h4 class="my-2 pt-1">'+montant+'</h4>'+
+        '<div class="progress w-75" style="height:4px">'+
+        '<div class="progress-bar" role="progressbar" style="width: 65%" aria-valuenow="65" aria-valuemin="0" aria-valuemax="100"></div>'+
+        '</div>'+
+        '</div>';
+      banqueSenegal.innerHTML += element ;
+    }
+
+
+    console.log(res);
+  }
+})

@@ -253,4 +253,27 @@ class DashboardController extends Controller
       ->whereYear('created_at', Carbon::now()->year)
       ->get()->sum('montant');
   }
+
+  public function banqueMontantTotal($ba)
+  {
+
+$tableu = [] ;
+     $montant = Transaction::where('pays_id',$ba)
+      ->whereMonth('created_at',Carbon::now()->month)
+      ->whereYear('created_at',Carbon::now()->year)
+       ->select('banque_id', DB::raw('SUM(montant) as total_amount'))
+       ->groupBy('banque_id')
+      ->get();
+      foreach ($montant as $key => $item){
+        $tableu[] = $item->banque->nom ;
+        $tableu[] = $item->total_amont ;
+        $tableu[] = $item->banque->image_url ;
+      }
+
+    return response()->json([
+      'transaction' => $montant,
+
+
+    ]);
+  }
 }

@@ -134,6 +134,31 @@
       </div>
     </div>
   </div>
+
+
+  <div class="col-lg-12 mt-4">
+    <div class="card h-100">
+      <div class="card-header pb-0 d-flex justify-content-between mb-lg-n4">
+        <div class="card-title mb-0">
+          <h5 class="mb-0">Earning Reports</h5>
+          <small class="text-muted">Weekly Earnings Overview</small>
+        </div>
+
+        <!-- </div> -->
+      </div>
+      <div class="card-body">
+        <div class="border rounded p-3 mt-4" >
+          <div class="row gap-4 gap-sm-0 " id="banquesenegal">
+
+
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+
+
   <div class="col-xl-4 col-md-6 mt-3   order-1 order-xl-0">
     <div class="card h-100">
       <div class="card-header d-flex justify-content-between">
