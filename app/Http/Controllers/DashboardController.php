@@ -126,18 +126,40 @@ class DashboardController extends Controller
       11 => 'NOV',
       12 => 'DÉC',
     ];
-    $transactions_fr = $transactions->map(function ($transaction) use ($mois_fr) {
+
+    $results = DB::table('transactions')
+      ->select(
+        DB::raw('YEAR(created_at) as annee'),
+        DB::raw('MONTH(created_at) as mois'),
+      )
+      ->where('pays_id', $pays)
+      ->whereYear('created_at',Carbon::now()->year)
+      ->groupBy(DB::raw('YEAR(created_at)'), DB::raw('MONTH(created_at)'))
+      ->orderBy(DB::raw('YEAR(created_at)'))
+      ->orderBy(DB::raw('MONTH(created_at)'))
+      ->get();
+
+    /*$transactions_fr = $transactions->map(function ($transaction) use ($mois_fr) {
       $transaction->mois = $mois_fr[$transaction->mois];
       return $transaction;
+    });*/
+    $lesmois = $results->map(function ($result) use ($mois_fr){
+      $result->mois = $mois_fr[$result->mois];
+      return $result;
     });
 
     $labels = [];
     $data = [];
     $data_payee = [];
     $data_impayee = [];
-    foreach ($transactions_fr as $transaction => $item) {
-      $labels[$transaction] = $item->mois;
-      $data[$transaction] = $item->total;
+
+    foreach ($lesmois as $key => $item){
+      $labels[$key] =$item->mois;
+    }
+
+    foreach ($transactions as $key => $item) {
+
+      $data[$key] = $item->total;
     }
     foreach ($transactions_terminee as $index => $item) {
       $data_payee[$index] = $item->total;
@@ -151,6 +173,9 @@ class DashboardController extends Controller
       'senegalMontant' => $data,
       'senegalPayee' => $data_payee,
       'senegalImpayee' => $data_impayee,
+      'transaction_termine' =>$transactions_impayee,
+
+
     ]);
 
 
@@ -158,13 +183,24 @@ class DashboardController extends Controller
 
   private function donneepays($pays, $statut)
   {
-    return Transaction::where('statut', $statut)
-      ->where('pays_id', $pays)
-      ->select(DB::raw('MONTH(created_at) as mois'), DB::raw('YEAR(created_at) as annee'), DB::raw('SUM(montant) as total'))
-      ->groupBy(DB::raw('YEAR(created_at)'), DB::raw('MONTH(created_at)'))
-      ->orderBy('annee', 'desc')
-      ->orderBy('mois', 'desc')
+    // Obtenir l'année actuelle
+    $currentYear = Carbon::now()->year;
+
+
+    // Requête pour regrouper les montants par mois pour l'année en cours
+    return $monthlyAmounts =
+
+      DB::table('transactions')
+        ->where('pays_id', $pays)
+        ->where('statut', $statut)
+        ->select(
+      DB::raw('MONTH(created_at) as mois'),
+      DB::raw('SUM(montant) as total'))
+      ->whereYear('created_at', $currentYear)
+      ->groupBy(DB::raw('MONTH(created_at)'))
       ->get();
+
+
   }
 
   public function montantDeChaqueAgence()

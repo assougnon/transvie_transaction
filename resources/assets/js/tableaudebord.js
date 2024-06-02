@@ -169,6 +169,8 @@ $.ajax({
   type: 'GET',
   url: `${baseUrl}statistiques/pays/1`,
   success: function(res) {
+
+    console.log(res);
     senegalMois = res.senegalMois;
     senegalMontant = res.senegalMontant;
     senegalPayees = res.senegalPayee;
@@ -447,6 +449,7 @@ $.ajax({
     return res;
   }
 }).then((res)=>{
+
   var options =
     {
       chart: {
@@ -566,6 +569,7 @@ function updateAgenceChart(){
       return res;
     }
   }).then((res)=>{
+
     chartAgences.updateOptions({
       chart: {
         height: 500,
@@ -936,7 +940,7 @@ $.ajax({
     const banqueSenegal = document.getElementById("banquesenegal");
 
     for(let i= 0; i < res.transaction.length; i++){
-           let montant = res.transaction[i].total_amount;
+           let montant = parseInt(res.transaction[i].total_amount);
 
 
 
@@ -945,10 +949,7 @@ $.ajax({
         '<div class="badge rounded bg-label-primary p-1"><img  height="40" class=" rounded" src="'+res.transaction[i].banque.image_url+'" alt=""></div>'+
         '<h6 class="mb-0">'+res.transaction[i].banque.nom+'</h6>'+
         '</div>'+
-        '<h4 class="my-2 pt-1">'+montant+'</h4>'+
-        '<div class="progress w-75" style="height:4px">'+
-        '<div class="progress-bar" role="progressbar" style="width: 65%" aria-valuenow="65" aria-valuemin="0" aria-valuemax="100"></div>'+
-        '</div>'+
+        '<h4 class="my-2 pt-1">'+fm.from(montant)+' CFA </h4>'+
         '</div>';
       banqueSenegal.innerHTML += element ;
     }
