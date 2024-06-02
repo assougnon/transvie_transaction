@@ -669,7 +669,8 @@ function statistiqueMoisSenegal(){
     type:'GET',
     url:`${baseUrl}statistiques/mois/1`,
     success: function(res) {
-      donutChart.updateOptions( {
+      donutChart.updateOptions(
+        {
         chart: {
           height: 390,
           type: 'donut'
@@ -826,111 +827,111 @@ function statistiqueMoiSenegalBar(){
       senegalMontant = res.senegalMontant;
       senegalPayees = res.senegalPayee;
       senegalImpayees = res.senegalImpayee;
+      return res;
     }
 
   })
-    .then(()=>{
-      barChartConfig =
-        {
-          chart: {
-            height: 400,
-            type: 'bar',
-            stacked: false,
-            parentHeightOffset: 0,
-            toolbar: {
-              show: true,
-              zoom: true,
-              zoomin: true,
-              zoomout: true,
-            },
+    .then((res)=>{
 
+      barChart.updateOptions( {
+        chart: {
+          height: 400,
+          type: 'bar',
+          stacked: false,
+          parentHeightOffset: 0,
+          toolbar: {
+            show: true,
+            zoom: true,
+            zoomin: true,
+            zoomout: true,
           },
-          plotOptions: {
-            bar: {
-              columnWidth: '35%',
-              dataLabels: {
-                position: 'top'
-              }
 
+        },
+        plotOptions: {
+          bar: {
+            columnWidth: '35%',
+            dataLabels: {
+              position: 'top'
             }
-          },
-          dataLabels: {
-            enabled: false
-          },
-          legend: {
-            show: true,
-            position: 'top',
-            horizontalAlign: 'start',
-            labels: {
-              colors: legendColor,
-              useSeriesColors: true
-            }
-          },
-          colors: [chartColors.column.series1, chartColors.column.series2, chartColors.column.series3],
-          stroke: {
-            show: true,
-            colors: ['transparent']
-          },
-          grid: {
-            borderColor: borderColor,
-            xaxis: {
-              lines: {
-                show: true
-              }
-            }
-          },
-          series: [
-            {
-              name: 'Encours',
-              data: senegalMontant
-            },
-            {
-              name: 'Payées',
-              data: senegalPayees
-            },
-            {
-              name: 'Impayées',
-              data: senegalImpayees
-            }
-          ],
-          xaxis: {
-            categories: senegalMois,
-            axisBorder: {
-              show: false
-            },
-            axisTicks: {
-              show: false
-            },
-            labels: {
-              style: {
-                colors: labelColor,
-                fontSize: '13px'
-              }
-            }
-          },
-          yaxis: {
-            labels: {
-              style: {
-                colors: labelColor,
-                fontSize: '13px'
-              },
-              formatter: function (value) {
-                return fm.from(value)+' CFA';
-              }
-            }
-          },
-          fill: {
-            opacity: 1
+
           }
-        };
-      if (typeof barChartEl !== undefined && barChartEl !== null) {
+        },
+        dataLabels: {
+          enabled: false
+        },
+        legend: {
+          show: true,
+          position: 'top',
+          horizontalAlign: 'start',
+          labels: {
+            colors: legendColor,
+            useSeriesColors: true
+          }
+        },
+        colors: [chartColors.column.series1, chartColors.column.series2, chartColors.column.series3],
+        stroke: {
+          show: true,
+          colors: ['transparent']
+        },
+        grid: {
+          borderColor: borderColor,
+          xaxis: {
+            lines: {
+              show: true
+            }
+          }
+        },
+        series: [
+          {
+            name: 'Encours',
+            data: res.senegalMontant
+          },
+          {
+            name: 'Payées',
+            data: res.senegalPayee
+          },
+          {
+            name: 'Impayées',
+            data: res.senegalImpayee
+          }
+        ],
+        xaxis: {
+          categories: res.senegalMois,
+          axisBorder: {
+            show: false
+          },
+          axisTicks: {
+            show: false
+          },
+          labels: {
+            style: {
+              colors: labelColor,
+              fontSize: '13px'
+            }
+          }
+        },
+        yaxis: {
+          labels: {
+            style: {
+              colors: labelColor,
+              fontSize: '13px'
+            },
+            formatter: function (value) {
+              return fm.from(value)+' CFA';
+            }
+          }
+        },
+        fill: {
+          opacity: 1
+        }
+      }, false,true)
 
-        barChart = new ApexCharts(barChartEl, barChartConfig);
-        barChart.render();
-      }
+
 
     });
 }
+
+
 $.ajax({
   type: 'GET',
   url: `${baseUrl}statistiques/banque/1`,
