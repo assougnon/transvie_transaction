@@ -90,6 +90,7 @@ class FactureTransactionController extends Controller
   public function delete(string $id)
   {
     $transaction = Transaction::where('numero',$id)->delete();
+
     return Response()->json(
       ['message' => 'La Transaction  ',]
     );
