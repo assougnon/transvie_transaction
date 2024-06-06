@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Events\TransactionDeleted;
 use App\Events\TransactionUpdated;
 use App\Models\Adherant;
 use App\Models\Banque;
@@ -90,7 +91,7 @@ class FactureTransactionController extends Controller
   public function delete(string $id)
   {
     $transaction = Transaction::where('numero',$id)->delete();
-
+    event(new TransactionDeleted('transaction-deleted'));
     return Response()->json(
       ['message' => 'La Transaction  ',]
     );

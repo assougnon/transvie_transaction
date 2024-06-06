@@ -23,3 +23,6 @@ Broadcast::channel('transaction-created', function ($transaction) {
 Broadcast::channel('transaction-updated', function ($transaction) {
   return true;
 });
+Broadcast::channel('transaction-deleted', function ($message) {
+  return true;
+});

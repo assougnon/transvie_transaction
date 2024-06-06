@@ -7,8 +7,9 @@
 $(function () {
   var dt_ajax_table = $('.datatables-ajax'),
     dt_filter_table = $('.dt-column-search'),
-    dt_adv_filter_table = $('.dt-advanced-search'),
+
     dt_responsive_table = $('.dt-responsive'),
+    dt_adv_filter_table = $('.dt-advanced-search'),
     startDateEle = $('.start_date'),
     endDateEle = $('.end_date');
 

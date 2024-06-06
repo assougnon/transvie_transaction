@@ -576,6 +576,7 @@ $(function () {
       url: `${baseUrl}user-list`,
       type: 'POST',
       success: function (status) {
+
         dt_user.draw();
         offCanvasForm.offcanvas('hide');
 
@@ -588,6 +589,7 @@ $(function () {
             confirmButton: 'btn btn-success'
           }
         });
+
       },
       error: function (err) {
         offCanvasForm.offcanvas('hide');

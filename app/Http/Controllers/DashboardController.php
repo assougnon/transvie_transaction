@@ -139,7 +139,7 @@ class DashboardController extends Controller
       ->get();
 
     $transactionsTerminee = DB::table('transactions')
-      ->where('pays_id', 1)
+      ->where('pays_id', $pays)
       ->where('statut', 'Terminee')
       ->whereYear('created_at', Carbon::now()->year)
       ->select(DB::raw('MONTH(created_at) as mois'), DB::raw('SUM(montant) as total'))
@@ -148,7 +148,7 @@ class DashboardController extends Controller
       ->keyBy('mois');
 
     $transactionsEncours = DB::table('transactions')
-      ->where('pays_id', 1)
+      ->where('pays_id', $pays)
       ->where('statut', 'Encours')
       ->whereYear('created_at', Carbon::now()->year)
       ->select(DB::raw('MONTH(created_at) as mois'), DB::raw('SUM(montant) as total'))
@@ -157,7 +157,7 @@ class DashboardController extends Controller
       ->keyBy('mois');
 
     $transactions_impayee = DB::table('transactions')
-      ->where('pays_id', 1)
+      ->where('pays_id', $pays)
       ->where('statut', 'Impayee')
       ->whereYear('created_at', Carbon::now()->year)
       ->select(DB::raw('MONTH(created_at) as mois'), DB::raw('SUM(montant) as total'))

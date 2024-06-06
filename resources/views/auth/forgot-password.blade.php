@@ -34,8 +34,8 @@ $configData = Helper::appClasses();
           </a>
         </div>
         <!-- /Logo -->
-        <h3 class="mb-1">Forgot Password? 🔒</h3>
-        <p class="mb-4">Enter your email and we'll send you instructions to reset your password</p>
+        <h3 class="mb-1">Mot de passe oublié ? 🔒</h3>
+        <p class="mb-4">Entrez votre email et nous vous enverrons des instructions pour réinitialiser votre mot de passe</p>
 
         @if (session('status'))
         <div class="mb-1 text-success">
@@ -54,13 +54,13 @@ $configData = Helper::appClasses();
             </span>
             @enderror
           </div>
-          <button type="submit" class="btn btn-primary d-grid w-100">Send Reset Link</button>
+          <button type="submit" class="btn btn-primary d-grid w-100">Envoyer le lien de réinitialisation</button>
         </form>
         <div class="text-center">
           @if (Route::has('login'))
           <a href="{{ route('login') }}" class="d-flex align-items-center justify-content-center">
             <i class="ti ti-chevron-left scaleX-n1-rtl"></i>
-            Back to login
+            Retour connexion
           </a>
           @endif
         </div>

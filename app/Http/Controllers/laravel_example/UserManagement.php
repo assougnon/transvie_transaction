@@ -43,7 +43,7 @@ class UserManagement extends Controller
   /**
    * Display a listing of the resource.
    *
-   * @return \Illuminate\Http\Response
+   * @return \Illuminate\Http\JsonResponse
    */
   public function index(Request $request)
   {
@@ -141,7 +141,7 @@ class UserManagement extends Controller
    * Store a newly created resource in storage.
    *
    * @param  \Illuminate\Http\Request  $request
-   * @return \Illuminate\Http\Response
+   * @return \Illuminate\Http\JsonResponse
    */
   public function store(Request $request)
   {
@@ -149,23 +149,36 @@ class UserManagement extends Controller
 
     if ($userID) {
       // update the value
-      $users = User::updateOrCreate(
-        ['id' => $userID],
-        [
-          'name' => $request->name,
-          'email' => $request->email,
-          'prenom'=>$request->prenom,
-          'telephone'=>$request->telephone,
-          'poste'=>$request->poste,
-          'agence_id'=>$request->agence,
-          'adresse' => $request->adresse
+      if ($request->password == null){
+        $users = User::updateOrCreate(
+          ['id' => $userID],
+          [
+            'name' => $request->name,
+            'email' => $request->email,
+            'prenom'=>$request->prenom,
+            'telephone'=>$request->telephone,
+            'poste'=>$request->poste,
+            'agence_id'=>$request->agence,
+            'adresse' => $request->adresse
 
-        ]
+          ]);
+      }else{
+        $users = User::updateOrCreate(
+          ['id' => $userID],
+          [
+            'name' => $request->name,
+            'email' => $request->email,
+            'prenom'=>$request->prenom,
+            'telephone'=>$request->telephone,
+            'poste'=>$request->poste,
+            'agence_id'=>$request->agence,
+            'adresse' => $request->adresse,
+            'password' => Hash::make($request->password)
+
+          ]);
+      }
 
 
-      );
-
-      // user updated
       return response()->json('Réussie');
     } else {
       // create new one if email is unique

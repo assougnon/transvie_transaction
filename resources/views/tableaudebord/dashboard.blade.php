@@ -126,7 +126,7 @@
   <div class="col-12 ">
     <div class="card">
       <div class="card-header d-flex justify-content-between align-items-md-center align-items-start">
-        <h5 class="card-title mb-0">Répartition des données par Agence (SÉNÉGAL) </h5>
+        <h5 class="card-title mb-0">Répartition des données par Agence (SÉNÉGAL) Mois En cours</h5>
 
       </div>
       <div class="card-body">
@@ -140,8 +140,8 @@
     <div class="card h-100">
       <div class="card-header pb-0 d-flex justify-content-between mb-lg-n4">
         <div class="card-title mb-0">
-          <h5 class="mb-0">Earning Reports</h5>
-          <small class="text-muted">Weekly Earnings Overview</small>
+          <h5 class="mb-0">Banque du SÉNÉGAL</h5>
+          <small class="text-muted">Aperçu des gains mensuels</small>
         </div>
 
         <!-- </div> -->
@@ -252,31 +252,53 @@
   </div>
 
 
+  <div class="col-12 col-xl-8  mt-3">
+    <div class="card">
+      <div class="card-header d-flex justify-content-between align-items-md-center align-items-start">
+        <h5 class="card-title mb-0">Données Analytiques du Benin</h5>
 
-
-</div>
-  <div class="row mt-4">
-    <div class="col-6 col-xl-6 mb-4">
-      <div class="card">
-        <div class="card-header d-flex justify-content-between align-items-md-center align-items-start">
-          <h5 class="card-title mb-0">Données Analytiques du Benin</h5>
-
-        </div>
-        <div class="card-body">
-          <div id="barChartBenin"></div>
-        </div>
       </div>
-    </div>
-    <div class="col-6 col-xl-6 mb-4">
-      <div class="card">
-        <div class="card-header d-flex justify-content-between align-items-md-center align-items-start">
-          <h5 class="card-title mb-0">Données Analytiques du Benin</h5>
-
-        </div>
-        <div class="card-body">
-          <div id="barChartBenin"></div>
-        </div>
+      <div class="card-body">
+        <div id="barChartBenin"></div>
       </div>
     </div>
   </div>
+
+  <div class="col-6 col-xl-6 mt-4">
+    <div class="card">
+      <div class="card-header d-flex justify-content-between align-items-md-center align-items-start">
+        <h5 class="card-title mb-0">Données Analytiques du CÔTE D'IVOIRE</h5>
+
+      </div>
+      <div class="card-body">
+        <div id="barCoteIvoire"></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="col-6 col-xl-6 mt-4">
+    <div class="card">
+      <div class="card-header d-flex justify-content-between align-items-md-center align-items-start">
+        <h5 class="card-title mb-0">Données Analytiques du TOGO</h5>
+
+      </div>
+      <div class="card-body">
+        <div id="barTogo"></div>
+      </div>
+    </div>
+  </div>
+  <div class="col-12 col-xl-12 mt-4">
+    <div class="card">
+      <div class="card-header d-flex justify-content-between align-items-md-center align-items-start">
+        <h5 class="card-title mb-0">Données Analytiques de la GAMBIE</h5>
+
+      </div>
+      <div class="card-body">
+        <div id="barGambie"></div>
+      </div>
+    </div>
+  </div>
+
+</div>
+
 @endsection

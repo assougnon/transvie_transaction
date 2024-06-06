@@ -25,14 +25,14 @@ class TransactionController extends Controller
     public function index()
     {
 
-      $id = Auth::user()->agence()->first()->id;
-      $clients = Adherant::where('agence_id',$id)->get()->count();
-      $facture = Transaction::where('user_id',Auth::user()->id)->get()->count();
-      $price = Transaction::all()->where('agence_id',$id)->sum('montant');
+      $user_agence = Auth::user()->agence->id;
+      $clients = Adherant::where('agence_id',$user_agence)->get()->count();
+      $facture = Transaction::where('agence_id',$user_agence)->get()->count();
+      $price = Transaction::all()->where('agence_id',$user_agence)->sum('montant');
         $cfa = $price   ;
       $impaye = Transaction::where('statut','Impayee')
-        ->where(function ($query) use ($id) {
-          return $query->where('agence_id',$id);
+        ->where(function ($query) use ($user_agence) {
+          return $query->where('agence_id',$user_agence);
         })
         ->get()->sum('montant');
 
@@ -109,12 +109,12 @@ class TransactionController extends Controller
         foreach ($users as $user) {
           $nestedData['numero'] = $user->numero;
           $nestedData['prenom'] = $user->adherant_prenom.' '.$user->adherant_nom;
-          $nestedData['montant'] = $user->montant;
+          $nestedData['banque'] = $user->banque->nom;
           $nestedData['telephone'] = $user->telephone;
+          $nestedData['montant'] = $user->montant;
           $nestedData['type'] = $user->type;
           $nestedData['statut'] = $user->statut;
           $nestedData['note'] = $user->note;
-          $nestedData['banque'] = $user->banque->nom;
           $nestedData['created_at'] = $user->created_at;
 
           $data[] = $nestedData;

@@ -1,4 +1,4 @@
-<svg width="" height="45" id="Calque_2" data-name="Calque 2" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 76.17 28.64">
+<svg  height="45" id="Calque_2" data-name="Calque 2" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 76.17 28.64">
   <defs>
     <style>
       .cls-1 {

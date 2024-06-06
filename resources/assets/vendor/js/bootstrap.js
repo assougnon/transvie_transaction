@@ -11,7 +11,7 @@ import Echo from 'laravel-echo';
 
 import * as bootstrap from 'bootstrap'
 
-
+import {French} from  'flatpickr/dist/l10n/fr.js';
 
 import { FormatMoney } from 'format-money-js';
 
@@ -56,6 +56,7 @@ $.ajax({
 
 try {
   window.CountUp = CountUp;
+  window.French = French ;
   window.intlTelInput = intlTelInput
 }catch (e) {
 

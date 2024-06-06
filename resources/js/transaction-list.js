@@ -8,7 +8,186 @@ import Swal from 'sweetalert2';
 
 $(function () {
   // Variable declaration for table
-  var dt_invoice_table = $('.invoice-list-table');
+
+var dt_invoice_table = $('.invoice-list-table');
+  var dt_adv_filter_table = $('.dt-advanced-search'),
+    startDateEle = $('.start_date'),
+    endDateEle = $('.end_date');
+
+  var rangePickr = $('.flatpickr-range'),
+    dateFormat = 'DD/MM/YYYY';
+
+  if (rangePickr.length) {
+    rangePickr.flatpickr({
+      mode: 'range',
+      dateFormat: 'm/d/Y',
+      orientation: isRtl ? 'auto right' : 'auto left',
+      locale: French,
+      onClose: function (selectedDates, dateStr, instance) {
+        var startDate = '',
+          endDate = new Date();
+        if (selectedDates[0] != undefined) {
+          startDate = moment(selectedDates[0]).format('DD/MM/YYYY');
+          startDateEle.val(startDate);
+        }
+        if (selectedDates[1] != undefined) {
+          endDate = moment(selectedDates[1]).format('DD/MM/YYYY');
+          endDateEle.val(endDate);
+        }
+        $(rangePickr).trigger('change').trigger('keyup');
+      }
+    });
+  }
+
+  function filterColumn(i, val) {
+    if (i === 5) {
+      var startDate = startDateEle.val(),
+        endDate = endDateEle.val();
+      if (startDate !== '' && endDate !== '') {
+        $.fn.dataTableExt.afnFiltering.length = 0; // Reset datatable filter
+        dt_adv_filter_table.dataTable().fnDraw(); // Draw table after filter
+        filterByDate(i, startDate, endDate); // We call our filter function
+      }
+      dt_adv_filter_table.dataTable().fnDraw();
+    } else {
+      dt_adv_filter_table.DataTable().column(i).search(val, false, true).draw();
+    }
+  }
+
+  // Advance filter function
+  // We pass the column location, the start date, and the end date
+  $.fn.dataTableExt.afnFiltering.length = 0;
+  var filterByDate = function (column, startDate, endDate) {
+    // Custom filter syntax requires pushing the new filter to the global filter array
+    $.fn.dataTableExt.afnFiltering.push(function (oSettings, aData, iDataIndex) {
+      var rowDate = normalizeDate(aData[column]),
+        start = normalizeDate(startDate),
+        end = normalizeDate(endDate);
+
+      // If our date from the row is between the start and end
+      if (start <= rowDate && rowDate <= end) {
+        return true;
+      } else if (rowDate >= start && end === '' && start !== '') {
+        return true;
+      } else if (rowDate <= end && start === '' && end !== '') {
+        return true;
+      } else {
+        return false;
+      }
+    });
+  };
+
+  // converts date strings to a Date object, then normalized into a YYYYMMMDD format (ex: 20131220). Makes comparing dates easier. ex: 20131220 > 20121220
+  var normalizeDate = function (dateString) {
+    var date = new Date(dateString);
+    var normalized =
+      date.getFullYear() + '' + ('0' + (date.getMonth() + 1)).slice(-2) + '' + ('0' + date.getDate()).slice(-2);
+    return normalized;
+  };
+  // Advanced Search
+  // --------------------------------------------------------------------
+
+  // Advanced Filter table
+  if (dt_adv_filter_table.length) {
+    var dt_adv_filter = dt_adv_filter_table.DataTable({
+      dom: "<'row'<'col-sm-12'tr>><'row'<'col-sm-12 col-md-6'i><'col-sm-12 col-md-6 dataTables_pager'p>>",
+
+      processing: true,
+      serverSide: true,
+      ajax: {
+        url: baseUrl + 'transaction/management'
+      },
+      columns: [
+        { data: '' },
+        { data: 'numero' },
+        { data: 'prenom' },
+        { data: 'montant' },
+        { data: 'banque' },
+        { data: 'created_at' },
+        { data: 'statut' }
+      ],
+
+      columnDefs: [
+        {
+          className: 'control',
+          orderable: false,
+          targets: 0,
+          render: function (data, type, full, meta) {
+            return '';
+          }
+        },
+        {
+          // Due Date
+          targets: 5,
+          render: function (data, type, full, meta) {
+
+
+            return  moment(full['created_at']).format(dateFormat);
+          }
+        },
+      ],
+      order: [[1, 'desc']],
+      orderCellsTop: true,
+      responsive: {
+        details: {
+          display: $.fn.dataTable.Responsive.display.modal({
+            header: function (row) {
+              var data = row.data();
+              return 'Details of ' + data['full_name'];
+            }
+          }),
+          type: 'column',
+          renderer: function (api, rowIdx, columns) {
+            var data = $.map(columns, function (col, i) {
+              return col.title !== '' // ? Do not show row in modal popup if title is blank (for check box)
+                ? '<tr data-dt-row="' +
+                col.rowIndex +
+                '" data-dt-column="' +
+                col.columnIndex +
+                '">' +
+                '<td>' +
+                col.title +
+                ':' +
+                '</td> ' +
+                '<td>' +
+                col.data +
+                '</td>' +
+                '</tr>'
+                : '';
+            }).join('');
+
+            return data ? $('<table class="table"/><tbody />').append(data) : false;
+          }
+        }
+      },
+
+      initComplete: function () {
+        this.api()
+          .columns(5)
+          .every(function () {
+            let column = this;
+            $('input.dt-input').on('keyup', function () {
+
+
+              if (column.search() !== this.value) {
+
+                filterColumn($(this).attr('data-column'), $(this).val());
+
+              }
+            });
+          });
+      }
+    });
+  }
+
+  // on key up from input field
+/*  $('input.dt-input').on('keyup', function () {
+console.log($(this).attr('data-column'));
+
+    filterColumn($(this).attr('data-column'), $(this).val());
+  });*/
+
+
 
   // Invoice datatable
   if (dt_invoice_table.length) {
@@ -17,26 +196,23 @@ $(function () {
       serverSide: true,
       ajax: {
         url: baseUrl + 'transaction/management'
-      }, // JSON file to add data
+      },
       columns: [
-        // columns according to JSON
         { data: '' },
         { data: 'numero' },
+        { data: 'adherant_prenom' },
         { data: 'montant' },
         { data: 'type' },
         { data: 'created_at' },
         { data: 'statut' },
-        { data: 'note' },
-        { data: 'created_at' },
-
-
+        { data: 'note' }
       ],
       columnDefs: [
         {
           // For Responsive
           className: 'control',
           responsivePriority: 2,
-          searchable: false,
+          orderable: false,
           targets: 0,
           render: function (data, type, full, meta) {
             return '';
@@ -88,31 +264,7 @@ $(function () {
           // Invoice status
           targets: 3,
           render: function (data, type, full, meta) {
-            var $invoice_status = full['statut'],
-              $due_date = full['created_at'],
-              $balance = full['montant'];
-            var roleBadgeObj = {
-              Terminee: '<span class="badge badge-center rounded-pill bg-label-secondary w-px-30 h-px-30"><i class="ti ti-circle-check ti-sm"></i></span>',
-              Encours:
-                '<span class="badge badge-center rounded-pill bg-label-primary w-px-30 h-px-30"><i class="ti ti-device-floppy ti-sm"></i></span>',
-              'Past Due':
-                '<span class="badge badge-center rounded-pill bg-label-danger w-px-30 h-px-30"><i class="ti ti-info-circle ti-sm"></i></span>',
-              'Partial Payment':
-                '<span class="badge badge-center rounded-pill bg-label-success w-px-30 h-px-30"><i class="ti ti-circle-half-2 ti-sm"></i></span>',
-              Rejetee: '<span class="badge badge-center rounded-pill bg-label-warning w-px-30 h-px-30"><i class="ti ti-chart-pie ti-sm"></i></span>',
-              Impayee:
-                '<span class="badge badge-center rounded-pill bg-label-info w-px-30 h-px-30"><i class="ti ti-arrow-down-circle ti-sm"></i></span>'
-            };
             return (
-              /*"<span data-bs-toggle='tooltip' data-bs-html='true' title='<span>" +
-              $invoice_status +
-              '<br> <span class="fw-medium">Balance:</span> ' +
-              $balance +
-              '<br> <span class="fw-medium">Due Date:</span> ' +
-              $due_date +
-              "</span>'>" +
-              roleBadgeObj[$invoice_status] +
-              '</span>'*/
               full['banque']
             );
           }
@@ -133,7 +285,7 @@ $(function () {
           render: function (data, type, full, meta) {
             var $due_date = new Date(full['created_at']);
 
-            return  moment($due_date).format('DD-MM-YYYY');
+            return  moment(full['created_at']).format(dateFormat);
           }
         },
         {
@@ -144,13 +296,13 @@ $(function () {
             var $balance = full['statut'];
             if ($balance === 'Terminee') {
               var $badge_class = 'bg-label-success';
-              return '<span class="badge ' + $badge_class + '" text-capitalized>'+$balance+'</span>';
+              return '<span class="badge ' + $badge_class + ' text-uppercase">'+$balance+'</span>';
             } else if($balance === 'Encours'){
                $badge_class = 'bg-label-primary';
-              return '<span class="badge ' + $badge_class + '" text-capitalized> '+$balance+' </span>';
+              return '<span class="badge ' + $badge_class + ' text-uppercase">'+$balance+' </span>';
             }else{
               $badge_class = 'bg-label-danger';
-              return '<span class="badge ' + $badge_class + '" text-capitalized> '+$balance+' </span>';
+              return '<span class="badge ' + $badge_class + ' text-uppercase"> '+$balance+' </span>';
             }
           }
         },
@@ -188,7 +340,7 @@ $(function () {
       language: {
         sLengthMenu: 'Show _MENU_',
         search: '',
-        searchPlaceholder: 'Search Invoice'
+        searchPlaceholder: 'Recherché une Transaction'
       },
       // Buttons with Dropdown
       buttons: [
@@ -236,11 +388,11 @@ $(function () {
       initComplete: function () {
         // Adding role filter once table initialized
         this.api()
-          .columns(5)
+          .columns(6)
           .every(function () {
-            var column = this;
+            /*var column = this;
             var select = $(
-              '<select id="UserRole" class="form-select"><option value=""> Select Status </option></select>'
+              '<select id="UserRole" class="form-select"><option value=""> Selectionne le statut </option></select>'
             )
               .appendTo('.invoice_status')
               .on('change', function () {
@@ -256,7 +408,7 @@ $(function () {
               .sort()
               .each(function (d, j) {
                 select.append('<option value="' + d + '" class="text-capitalize">' + d + '</option>');
-              });
+              });*/
           });
       }
     });
