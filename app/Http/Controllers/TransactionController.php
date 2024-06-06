@@ -70,7 +70,7 @@ class TransactionController extends Controller
       $start = $request->input('start');
       $order = $columns[$request->input('order.0.column')];
       $dir = $request->input('order.0.dir');
-      $id = Auth::user()->agence()->first()->id;
+      $id = Auth::user()->agence->id;
       if (empty($request->input('search.value'))) {
         $users = Transaction::where('agence_id',$id)->offset($start)
           ->limit($limit)
