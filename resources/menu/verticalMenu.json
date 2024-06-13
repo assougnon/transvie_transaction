@@ -66,13 +66,30 @@
     },
     {
       "name": "Utilisateurs",
-      "icon": "menu-icon tf-icons ti ti-brand-php",
+      "icon": "menu-icon tf-icons ti ti-settings",
       "slug": "laravel-example",
       "submenu": [
         {
           "url": "laravel/user-management",
           "name": "Gestion des Utilisateurs",
           "slug": "laravel-example-user-management"
+        }
+      ]
+    },
+    {
+      "name": "Remises",
+      "icon": "menu-icon tf-icons ti ti-file",
+      "slug": "transvie-remise",
+      "submenu": [
+        {
+          "url": "remise/create",
+          "name": "Ajouter une remise",
+          "slug": "transvie-remise-ajout"
+        },
+        {
+          "url": "remise",
+          "name": "Liste des remises",
+          "slug": "transvie-remise-liste"
         }
       ]
     }

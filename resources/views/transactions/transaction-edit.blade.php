@@ -96,6 +96,11 @@
         <button type="reset" class="btn btn-label-secondary">Annuler</button>
       </div>
     </form>
-  </div>
 
+  </div>
+  <div class="card mt-2">
+    @if(isset($remise->image_url))
+    <img src="{{asset($remise->image_url)}}" alt="" class="rounded-1">
+    @endif
+  </div>
 @endsection

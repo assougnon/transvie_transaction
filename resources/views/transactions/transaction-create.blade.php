@@ -60,7 +60,7 @@
 
         </div>
         <div class="col-md-6">
-          <label class="form-label" for="multicol-note">Note</label>
+          <label class="form-label" for="multicol-note">Description / Numéro transaction (Nº chèque, Nº Virement)</label>
           <input type="text" id="multicol-note" class="form-control @error('note') is-invalid @enderror" placeholder="Ex: Numero virement" name="note" />
         </div>
       </div>

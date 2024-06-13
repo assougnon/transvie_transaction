@@ -5,6 +5,7 @@ use App\Http\Controllers\BanqueController;
 use App\Http\Controllers\CreateUserController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\FactureTransactionController;
+use App\Http\Controllers\RemiseController;
 use App\Http\Controllers\TransactionController;
 use App\Livewire\UserInscription;
 use App\Livewire\UserProfil;
@@ -380,7 +381,9 @@ Route::middleware([
   Route::get('/userprofil', UserProfil::class)->name('userprofil');
   Route::get('/usermanagement', \App\Livewire\UserManagement::class)->name('usermanagement');
 
-
+Route::resource('remise', RemiseController::class);
+Route::get('remises-liste',[RemiseController::class,'liste']);
+Route::get('images-remise',[RemiseController::class,'imageRemise']);
 
 
   Route::get('adherant',[AdherantController::class,'index'])->name('adherant-liste');
@@ -428,6 +431,13 @@ Route::post('register', [RegisteredUserController::class, 'store'])
 Route::get('inscription',[CreateUserController::class,'index'])->name('inscription');
 Route::post('inscription',[CreateUserController::class,'store']);
 
+Route::get('mailtransaction', function (){
+$user = \App\Models\User::find(1);
+$transction = \App\Models\Transaction::find(98);
+
+
+  return new \App\Mail\TransactionImpayee($transction);
+});
 /*Route::resources(['adherant' => AdherantController::class]);*/
 
 

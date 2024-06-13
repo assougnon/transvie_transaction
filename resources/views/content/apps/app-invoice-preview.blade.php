@@ -107,9 +107,8 @@
         <div class="card-body mx-3 ">
           <div class="row">
             <div class="col-12">
-              <span class="fw-medium">Note:</span>
-              <span>It was a pleasure working with you and your team. We hope you will keep us in mind for future freelance
-              projects. Thank You!</span>
+              <span class="fw-medium"></span>
+              <span></span>
             </div>
           </div>
         </div>
@@ -136,10 +135,7 @@
           <a href="{{url('app/facture/print/'.$transaction->numero)}}" class="btn btn-label-secondary d-grid w-100 mb-2">
             Telecharger
           </a>
-          <button class="btn btn-primary d-grid w-100" data-bs-toggle="offcanvas" data-bs-target="#addPaymentOffcanvas">
-            <span class="d-flex align-items-center justify-content-center text-nowrap"><i
-                class="ti ti-currency-dollar ti-xs me-2"></i>Add Payment</span>
-          </button>
+
         </div>
       </div>
     </div>

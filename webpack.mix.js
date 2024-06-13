@@ -153,6 +153,7 @@ mix.js('resources/js/transaction-list.js', 'public/js/');
 mix.js('resources/js/register-user.js', 'public/js/');
 mix.js('resources/js/userTransaction.js', 'public/js/');
 mix.js('resources/js/adherent-form.js', 'public/js/');
+mix.js('resources/js/remise-liste.js', 'public/js/');
 
 mix.copy('node_modules/flag-icons/flags/1x1/*', 'public/assets/vendor/fonts/flags/1x1');
 mix.copy('node_modules/flag-icons/flags/4x3/*', 'public/assets/vendor/fonts/flags/4x3');

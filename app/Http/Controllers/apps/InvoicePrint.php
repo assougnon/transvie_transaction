@@ -22,11 +22,13 @@ class InvoicePrint extends Controller
     $agence = User::where('id',$transaction->user_id)->first()->agence()->first();
     $adherant =Adherant::where('id',$transaction->adherant_id)->first();
     $pageConfigs = ['myLayout' => 'blank'];
+    $date = Carbon::now()->translatedFormat('d F Y');
     return view('content.apps.app-invoice-print', [
       'pageConfigs' => $pageConfigs,
       'agence'=> $agence,
       'transaction'=> $transaction,
-      'adherant'=> $adherant
+      'adherant'=> $adherant,
+      'date' => $date
     ]);
 
   }
@@ -48,7 +50,7 @@ class InvoicePrint extends Controller
       'agence'=> $agence,
       'transaction'=> $transaction,
       'adherant'=> $adherant,
-      'date'=>$date
+      'date'=> $date
     ];
 /*
   return view('content.apps.app-invoice-print',[
@@ -65,6 +67,23 @@ class InvoicePrint extends Controller
 
 
 
+  }
+  public function imprimer($id)
+  {
+    $transaction = Transaction::where('numero',$id)->first();
+    $agence = User::where('id',$transaction->user_id)->first()->agence()->first();
+    $adherant =Adherant::where('id',$transaction->adherant_id)->first();
+    $pageConfigs = ['myLayout' => 'blank'];
+    $date = Carbon::now()->translatedFormat('d F Y');
+
+    return view('content.apps.app-invoice-print',[
+      'pageConfigs' => $pageConfigs,
+      'agence'=> $agence,
+      'transaction'=> $transaction,
+      'adherant'=> $adherant,
+      'date'=>$date
+
+    ]);
   }
 
 }

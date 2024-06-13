@@ -47,6 +47,11 @@ class Transaction extends Model
   {
     return $this->belongsTo(Banque::class);
   }
+
+  public function remise () : BelongsTo
+  {
+    return $this->belongsTo(Remise::class);
+  }
   public function adherant(): BelongsTo
   {
     return $this->belongsTo(Adherant::class);
@@ -55,9 +60,6 @@ class Transaction extends Model
   {
     return  $this->belongsTo(User::class);
   }
-  public function remise(): BelongsTo
-  {
-    return $this->belongsTo(Remise::class);
-  }
+
 
 }

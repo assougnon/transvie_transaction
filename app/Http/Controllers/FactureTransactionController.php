@@ -4,12 +4,15 @@ namespace App\Http\Controllers;
 
 use App\Events\TransactionDeleted;
 use App\Events\TransactionUpdated;
+use App\Mail\TransactionRecu;
 use App\Models\Adherant;
 use App\Models\Banque;
+use App\Models\Remise;
 use App\Models\Transaction;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Mail;
 
 class FactureTransactionController extends Controller
 {
@@ -37,6 +40,7 @@ class FactureTransactionController extends Controller
     $adherents = Adherant::where('agence_id',$user_agence->id)->get();
     $paysID = $user_agence->pays()->first()->id;
     $banques = Banque::where('pays_id',$paysID)->get();
+    $remise = Remise::find($transaction->remise_id);
 
 
 
@@ -45,11 +49,13 @@ class FactureTransactionController extends Controller
       'transaction'=> $transaction,
       'adherents'=> $adherents,
       'banques'=>$banques,
-      'adherentActuel' =>$adherantActuel
+      'adherentActuel' =>$adherantActuel,
+      'remise' => $remise
     ]);
   }
   public function update(Request $request)
   {
+    $old_transaction = Transaction::where('numero',$request->numero)->first();
 
     $request->validate([
       'montant' => 'required',
@@ -75,16 +81,23 @@ class FactureTransactionController extends Controller
         'statut'=> $request->statut
       ]
     );
+        $adherent = Adherant::where('id', $transac->adherant_id)->first();
 
     event(new TransactionUpdated($transac));
-  /*  if($transac->statut === 'Terminee'){
-      $sms  = new SmsSender();
-      $sms->sendSms($transac->adherant->telephone,'Hello TRANSVIE  vous informe que  votre paiement de '.$transac->montant.' CFA a été validé. Transaction numero :'.$transac->numero);
+    if($old_transaction->statut !== $request->statut){
+      if($transac->statut === 'Terminee'){
+        $sms  = new SmsSender();
+
+        $sms->sendSms($transac->adherant->telephone,'Hello TRANSVIE  vous informe que  votre paiement de '.$transac->montant.' CFA a été validé. Transaction numero :'.$transac->numero);
+
+         Mail::to($adherent)->send(new TransactionRecu($transac));
+      }
+      if($transac->statut === 'Impayee'){
+        $sms  = new SmsSender();
+        $sms->sendSms($transac->adherant->telephone,'Hello TRANSVIE  vous informe que  votre paiement de '.$transac->montant.' CFA n\'a été validé. Transaction numero :'.$transac->numero.'Veuillez vous rapprocher de nos services');
+      }
     }
-    if($transac->statut === 'Impayee'){
-      $sms  = new SmsSender();
-      $sms->sendSms($transac->adherant->telephone,'Hello TRANSVIE  vous informe que  votre paiement de '.$transac->montant.' CFA n\'a été validé. Transaction numero :'.$transac->numero.'Veuillez vous rapprocher de nos services');
-    }*/
+
     return redirect('/transaction');
   }
 
