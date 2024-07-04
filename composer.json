@@ -23,6 +23,7 @@
     "livewire/livewire": "^3.4.9",
     "pusher/pusher-php-server": "^7.2",
     "spatie/browsershot": "^4.0",
+    "spatie/laravel-permission": "^6.9",
     "victorybiz/laravel-tel-input": "^1.6"
   },
   "require-dev": {

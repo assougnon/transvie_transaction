@@ -24,6 +24,8 @@ mix.options({
  |--------------------------------------------------------------------------
  */
 
+
+
 mix.webpackConfig({
   output: {
     publicPath: process.env.ASSET_URL || undefined,

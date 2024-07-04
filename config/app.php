@@ -173,6 +173,7 @@ return [
         App\Providers\JetstreamServiceProvider::class,
     App\Providers\MenuServiceProvider::class,
     Barryvdh\Snappy\ServiceProvider::class,
+    Spatie\Permission\PermissionServiceProvider::class,
   ])->toArray(),
 
   /*

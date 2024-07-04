@@ -32,7 +32,7 @@ class SmsSender extends Controller
       $response = Http::withHeaders($headers)->post($apiURL, $postInput);
 
       $statusCode = $response->status();
-      $responseBody = json_decode($response->getBody(), true);
+     return $responseBody = json_decode($response->getBody(), true);
 
     }
 }

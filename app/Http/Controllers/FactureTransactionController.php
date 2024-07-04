@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Events\TransactionDeleted;
 use App\Events\TransactionUpdated;
+use App\Mail\TransactionImpayee;
 use App\Mail\TransactionRecu;
 use App\Models\Adherant;
 use App\Models\Banque;
@@ -86,15 +87,16 @@ class FactureTransactionController extends Controller
     event(new TransactionUpdated($transac));
     if($old_transaction->statut !== $request->statut){
       if($transac->statut === 'Terminee'){
-        $sms  = new SmsSender();
+       /* $sms  = new SmsSender();
 
-        $sms->sendSms($transac->adherant->telephone,'Hello TRANSVIE  vous informe que  votre paiement de '.$transac->montant.' CFA a été validé. Transaction numero :'.$transac->numero);
+        $sms->sendSms($transac->adherant->telephone,'Hello TRANSVIE  vous informe que  votre paiement de '.$transac->montant.' CFA a été validé. Transaction numero :'.$transac->numero);*/
 
          Mail::to($adherent)->send(new TransactionRecu($transac));
       }
       if($transac->statut === 'Impayee'){
-        $sms  = new SmsSender();
-        $sms->sendSms($transac->adherant->telephone,'Hello TRANSVIE  vous informe que  votre paiement de '.$transac->montant.' CFA n\'a été validé. Transaction numero :'.$transac->numero.'Veuillez vous rapprocher de nos services');
+      /*  $sms  = new SmsSender();
+        $sms->sendSms($transac->adherant->telephone,'Hello TRANSVIE  vous informe que  votre paiement de '.$transac->montant.' CFA n\'a  pas été validé. Transaction numero :'.$transac->numero.' Veuillez vous rapprocher de nos services');*/
+        Mail::to($adherent)->send(new TransactionImpayee($transac));
       }
     }
 
