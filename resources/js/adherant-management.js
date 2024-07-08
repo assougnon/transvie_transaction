@@ -144,8 +144,8 @@ $(function () {
           render: function (data, type, full, meta) {
             return (
               '<div class="d-inline-block text-nowrap">' +
-              `<button class="btn btn-sm btn-icon edit-record" data-id="${full['id']}" data-bs-toggle="modal" data-bs-target="#editAdherant"><i class="ti ti-edit"></i></button>` +
-              `<button class="btn btn-sm btn-icon delete-record" data-id="${full['id']}"><i class="ti ti-trash"></i></button>` +
+              `  <button class="btn btn-sm btn-icon edit-record" data-id="${full['id']}" data-bs-toggle="modal" data-bs-target="#editAdherant"><i class="ti ti-edit"></i></button>` +
+              `  <button class="btn btn-sm btn-icon delete-record" data-id="${full['id']}"><i class="ti ti-trash"></i></button>` +
               '</div>'
             );
           }

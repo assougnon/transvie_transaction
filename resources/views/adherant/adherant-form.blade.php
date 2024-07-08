@@ -98,6 +98,18 @@ $configData = Helper::appClasses();
                 @enderror
               </div>
             </div>
+            <div class="mb-3">
+              <label class="form-label" for="basic-icon-default-phone">Montant Attendu</label>
+              <div class="input-group input-group-merge">
+                <span id="basic-icon-default-population1" class="input-group-text @error('montant')  border-danger text-danger @enderror"><i class="ti ti-wallet"></i></span>
+                <input type="text" id="basic-icon-default-population" class="form-control phone-mask @error('montant') is-invalid @enderror" value="{{old('montant')}}" name="montant" placeholder="150000" aria-label="15000" aria-describedby="basic-icon-default-population2" />
+                @error('montant')
+                <span class="invalid-feedback" role="alert">
+              <span class="fw-medium">{{ $message }}</span>
+            </span>
+                @enderror
+              </div>
+            </div>
 
             <div class="mb-3">
               <label class="form-label" for="basic-icon-default-adresse">Adresse</label>

@@ -370,14 +370,64 @@ Route::get('/charts/chartjs', [ChartJs::class, 'index'])->name('charts-chartjs')
 Route::get('/maps/leaflet', [Leaflet::class, 'index'])->name('maps-leaflet');
 
 // laravel example
-Route::get('/laravel/user-management', [UserManagement::class, 'UserManagement'])->name('laravel-example-user-management');
-Route::resource('/user-list', UserManagement::class);
 
+Route::group(['middleware' => ['permission:show banque']], function () {
+  Route::resource('banques', BanqueController::class);
+});
+
+Route::group(['middleware' => ['permission:show dashboard']], function () {
+  Route::get('rapport',[DashboardController::class,'index']);
+});
+
+Route::group(['middleware' => ['permission:manage users']], function () {
+  Route::get('/laravel/user-management', [UserManagement::class, 'UserManagement'])->name('laravel-example-user-management');
+  Route::resource('/user-list', UserManagement::class);
+  Route::get('gestion-role',[\App\Http\Controllers\GestionroleController::class,'index']);
+  Route::post('create-role',[\App\Http\Controllers\GestionroleController::class,'create'])->name('create-role');
+});
+Route::group(['middleware' => ['permission:show adherent']], function () {
+  Route::get('adherant', [AdherantController::class, 'index'])->name('adherant-liste');
+});
+
+
+Route::group(['middleware' => ['permission:add adherent']], function () {
+  Route::get('adherant/create',[AdherantController::class,'create'])->name('adherant-ajout');
+});
+
+Route::post('adherant',[AdherantController::class,'store'])->name('adherant');
+Route::post('adherant/update',[AdherantController::class,'update']);
+Route::get('adherant/list',[AdherantController::class,'adherant']);
+
+Route::group(['middleware' => ['permission:edit adherent']], function () {
+  Route::get('adherant/{id}/edit',[AdherantController::class,'edit']);
+});
+Route::group(['middleware' => ['permission:delete adherent']], function () {
+  Route::post('adherant-destroy',[AdherantController::class,'destroy']);
+});
+
+
+Route::group(['middleware' => ['permission:add transaction']], function () {
+  Route::resource('/transaction-list', TransactionController::class);
+});
+
+
+Route::group(['middleware' => ['permission:show transaction']], function () {
+  Route::get('transaction-list',[TransactionController::class,'index'])->name('transaction-list');
+});
+
+
+
+Route::group(['middleware' => ['permission:add transaction']], function () {
+  Route::get('transaction-list/create',[TransactionController::class,'create'])->name('transaction-create');
+});
 Route::middleware([
     'auth:sanctum',
     config('jetstream.auth_session'),
     'verified',
 ])->group(function () {
+
+
+
   Route::get('/userprofil', UserProfil::class)->name('userprofil');
   Route::get('/usermanagement', \App\Livewire\UserManagement::class)->name('usermanagement');
 
@@ -386,41 +436,55 @@ Route::get('remises-liste',[RemiseController::class,'liste']);
 Route::get('images-remise',[RemiseController::class,'imageRemise']);
 
 
-  Route::get('adherant',[AdherantController::class,'index'])->name('adherant-liste');
-  Route::get('adherant/create',[AdherantController::class,'create'])->name('adherant-ajout');
-  Route::post('adherant',[AdherantController::class,'store'])->name('adherant');
-  Route::post('adherant/update',[AdherantController::class,'update']);
-  Route::get('adherant/list',[AdherantController::class,'adherant']);
-  Route::get('adherant/{id}/edit',[AdherantController::class,'edit']);
-  Route::get('adherant/pays',[AdherantController::class,'selectPays']);
-  Route::post('adherant-destroy',[AdherantController::class,'destroy']);
 
-  Route::resource('/transaction-list', TransactionController::class);
-  Route::get('transaction-list',[TransactionController::class,'index'])->name('transaction-list');
-  Route::get('transaction-list/create',[TransactionController::class,'create'])->name('transaction-create');
+
+  Route::get('adherant/pays',[AdherantController::class,'selectPays']);
+
+
+
+
   Route::get('transaction/management',[TransactionController::class,'transctionManagement']);
   Route::get('transaction/user-management/{user}',[UserViewAccount::class,'userTransactionManagement']);
 
   Route::get('transaction',[TransactionController::class,'index'])->name('transaction-list');
-  Route::resource('banques', BanqueController::class);
-  Route::get('banques/create', [BanqueController::class,'create'])->name('banques-ajout');
-  Route::get('banques', [BanqueController::class,'index'])->name('banques-liste');
-  Route::get('banque/list',[BanqueController::class,'listeBanque'])->name('bank-list');
-  Route::post('banque/update',[BanqueController::class,'updateBanque'])->name('bank-update');
-  Route::get('facture/transaction/{id}',[FactureTransactionController::class,'index']);
-  Route::get('transaction/{id}',[FactureTransactionController::class,'edit']);
-  Route::post('transaction-update',[FactureTransactionController::class,'update']);
-  Route::get('transaction-delete/{id}',[FactureTransactionController::class,'delete']);
+
+
+
+
+
 
 });
+
+Route::group(['middleware' => ['permission:add banque']], function () {
+  Route::get('banques/create', [BanqueController::class,'create'])->name('banques-ajout');
+});
+
+Route::group(['middleware' => ['permission:show banque']], function () {
+  Route::get('banques', [BanqueController::class,'index'])->name('banques-liste');
+});
+
+
+Route::get('banque/list',[BanqueController::class,'listeBanque'])->name('bank-list');
+
+Route::post('banque/update',[BanqueController::class,'updateBanque'])->name('bank-update');
+Route::get('facture/transaction/{id}',[FactureTransactionController::class,'index']);
+Route::get('transaction/{id}',[FactureTransactionController::class,'edit']);
+Route::post('transaction-update',[FactureTransactionController::class,'update']);
+Route::get('transaction-delete/{id}',[FactureTransactionController::class,'delete']);
+
+
 Route::redirect('/user/profile','/userprofil');
 
-Route::get('rapport',[DashboardController::class,'index']);
+
+
+
 Route::get('montant/pays',[DashboardController::class,'transactionPays']);
 Route::get('statistiques/pays/{pays}',[DashboardController::class,'statistiques']);
 Route::get('statistiques/mois/{mois}',[DashboardController::class,'donutData']);
 Route::get('statistiques/agence/senegal',[DashboardController::class,'montantDeChaqueAgence']);
 Route::get('statistiques/banque/{banque}',[DashboardController::class,'banqueMontantTotal']);
+
+
 
 Route::get('register', [RegisteredUserController::class, 'create'])
   ->middleware(['auth'])

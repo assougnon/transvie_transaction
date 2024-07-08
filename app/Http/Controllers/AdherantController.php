@@ -11,6 +11,10 @@ use Illuminate\Support\Facades\Validator;
 
 class AdherantController extends Controller
 {
+  public function __construct()
+  {
+   return $this->middleware('auth');
+  }
   /**
    * Display a listing of the resource.
    */
@@ -143,6 +147,7 @@ class AdherantController extends Controller
       'telephone' => $request->telephone2.$request->telephone,
       'email' => $request->email ? $request->email : 'NC',
       'population' => $request->population,
+      'montant_attendu' => $request->montant,
       'adresse' => $request->adresse ? $request->adresse : 'NC',
       'agence_id' => Auth::user()->agence->id,
     ]);
@@ -193,7 +198,9 @@ class AdherantController extends Controller
       ]);
       return response()->json('Réussie !');
     }else{
-      Adherant::updateOrCreate([
+      Adherant::updateOrCreate(
+        ['email' => $request->email],
+        [
         'prenom' => $request->prenom_adh,
         'nom' => $request->nom,
         'nom_entreprise' => $request->entreprise ? $request->entreprise : 'NC',

@@ -11,7 +11,7 @@ class Adherant extends Model
     use HasFactory;
 
   protected $fillable = [
-    'prenom','nom', 'nom_entreprise', 'telephone','email', 'adresse', 'population','agence_id'
+    'prenom','nom', 'nom_entreprise', 'telephone','email', 'adresse', 'population','agence_id','montant_attendu'
   ];
 
   public function agence(): BelongsTo

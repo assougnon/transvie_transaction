@@ -2,6 +2,7 @@
 
 namespace Database\Seeders;
 
+use App\Models\User;
 use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\DB;
@@ -16,7 +17,7 @@ class UserSeeder extends Seeder
     {
       DB::table('users')->insert([
         'name' => 'ASSOUGNON',
-        'prenom' => 'Leon legrand Assougnon',
+        'prenom' => 'Leon legrand ',
         'agence_id' => 1,
         'current_team_id' => 1,
         'poste' => 'Comptable',
@@ -25,5 +26,7 @@ class UserSeeder extends Seeder
         'email' => 'assougnonleon@gmail.com',
         'password' => Hash::make('machine213**'),
       ]);
+      $user = User::where('email','assougnonleon@gmail.com')->first();
+      $user->assignRole('super-admin');
     }
 }

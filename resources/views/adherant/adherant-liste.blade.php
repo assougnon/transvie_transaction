@@ -117,7 +117,10 @@
 
 
             <div class="col-12 text-center">
+
+              @can('edit adherent')
               <button type="submit" class="btn btn-primary me-sm-3 me-1 " id="submit1" >Modifier</button>
+              @endcan
               <button type="reset" class="btn btn-label-secondary" data-bs-dismiss="modal" aria-label="Close">Annuler</button>
             </div>
           </form>

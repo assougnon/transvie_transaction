@@ -17,6 +17,10 @@ use Illuminate\Support\Facades\Mail;
 
 class FactureTransactionController extends Controller
 {
+  public function __construct()
+  {
+    return $this->middleware('auth');
+  }
   public function index(string $id)
   {
     $transaction = Transaction::where('numero',$id)->first();

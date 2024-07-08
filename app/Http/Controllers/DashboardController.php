@@ -11,6 +11,11 @@ use Illuminate\Support\Facades\DB;
 
 class DashboardController extends Controller
 {
+
+  public function __construct()
+  {
+    return $this->middleware('auth');
+  }
   public function index()
   {
     $populationSenegal = $this->populations('1');

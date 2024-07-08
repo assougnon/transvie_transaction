@@ -73,6 +73,11 @@
           "url": "laravel/user-management",
           "name": "Gestion des Utilisateurs",
           "slug": "laravel-example-user-management"
+        },
+        {
+          "url": "gestion-role",
+          "name": "Gestion des Roles",
+          "slug": "laravel-example-user-role"
         }
       ]
     },

@@ -9,6 +9,10 @@ use Illuminate\Support\Facades\File;
 use App\Traits\ImageUpload;
 class BanqueController extends Controller
 {
+  public function __construct()
+  {
+   return $this->middleware('auth');
+  }
   /**
    * Display a listing of the resource.
    */

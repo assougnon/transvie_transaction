@@ -7,7 +7,10 @@ use Illuminate\Support\Facades\Http;
 
 class SmsSender extends Controller
 {
-
+  public function __construct()
+  {
+    return $this->middleware('auth');
+  }
     public function sendSms($to,$text){
 
 
