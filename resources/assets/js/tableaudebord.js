@@ -4,6 +4,7 @@ const barChartBenin = document.querySelector('#barChartBenin');
 const barCoteIvoire = document.querySelector('#barCoteIvoire');
 const barTogo = document.querySelector('#barTogo');
 const barGambie = document.querySelector('#barGambie');
+const banqueSenegal = document.getElementById("banquesenegal");
 
 let donutChartEl = document.querySelector('#donutChart');
 let  barChart, donutChart, chartAgences, drawChartCote, drawChartGambie, drawChartTogo, drawChartBenin;
@@ -242,6 +243,7 @@ Echo.channel('transaction-created')
     statistiqueMoiSenegalBar(3);
     statistiqueMoiSenegalBar(4);
     statistiqueMoiSenegalBar(5);
+    montantBanque();
 
 
     /*
@@ -267,6 +269,7 @@ Echo.channel('transaction-updated')
     statistiqueMoiSenegalBar(3);
     statistiqueMoiSenegalBar(4);
     statistiqueMoiSenegalBar(5);
+    montantBanque();
 
 
 
@@ -423,6 +426,7 @@ graphiquePays(5);
 graphiquePays(2);
 graphiquePays(4);
 graphiquePays(3);
+montantBanque();
 
 
 
@@ -1099,30 +1103,35 @@ function statistiqueMoiSenegalBar(paysId){
     });
 }
 
+function montantBanque(){
+  $.ajax({
+    type: 'GET',
+    url: `${baseUrl}statistiques/banque/1`,
+    success: function(res){
 
-$.ajax({
-  type: 'GET',
-  url: `${baseUrl}statistiques/banque/1`,
-  success: function(res){
-
-
-    const banqueSenegal = document.getElementById("banquesenegal");
-
-    for(let i= 0; i < res.transaction.length; i++){
-           let montant = parseInt(res.transaction[i].total_amount);
+      banqueSenegal.innerHTML = "";
 
 
 
-      let element = '<div class="col-12 col-sm-4">'+
-        '<div class="d-flex gap-2 align-items-center">'+
-        '<div class="badge rounded bg-label-primary p-1"><img  height="40" class=" rounded" src="'+res.transaction[i].banque.image_url+'" alt=""></div>'+
-        '<h6 class="mb-0">'+res.transaction[i].banque.nom+'</h6>'+
-        '</div>'+
-        '<h4 class="my-2 pt-1">'+fm.from(montant)+' CFA </h4>'+
-        '</div>';
-      banqueSenegal.innerHTML += element ;
+      for(let i= 0; i < res.transaction.length; i++){
+        let montant = parseInt(res.transaction[i].total_amount);
+        /* let depense = parseInt(res.tab[3]);*/
+
+
+
+
+        let element = '<div class="col-12 col-sm-4">'+
+          '<div class="d-flex gap-2 align-items-center">'+
+          '<div class="badge rounded bg-label-primary p-1"><img  height="40" class=" rounded" src="'+res.transaction[i].banque.image_url+'" alt=""></div>'+
+          '<h6 class="mb-0">'+res.transaction[i].banque.nom+'</h6>'+
+          '</div>'+
+          '<h4 class="my-2 pt-1">'+fm.from(montant - res.dep[i])+' CFA </h4>'+
+          '</div>';
+        banqueSenegal.innerHTML += element ;
+      }
+
+
     }
+  }) ;
+}
 
-
-  }
-})

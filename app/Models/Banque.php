@@ -32,4 +32,9 @@ class Banque extends Model
   {
     return  $this->hasMany(Transacsortie::class);
   }
+
+  public function depensesTotal()
+  {
+    return $this->depenses()->sum('montant');
+  }
 }

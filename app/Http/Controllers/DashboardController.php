@@ -3,6 +3,8 @@
 namespace App\Http\Controllers;
 
 use App\Models\Agence;
+use App\Models\Banque;
+use App\Models\Transacsortie;
 use App\Models\Transaction;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
@@ -349,14 +351,23 @@ class DashboardController extends Controller
       ->select('banque_id', DB::raw('SUM(montant) as total_amount'))
       ->groupBy('banque_id')
       ->get();
+
+
     foreach ($montant as $key => $item) {
       $tableu[] = $item->banque->nom;
       $tableu[] = $item->total_amont;
       $tableu[] = $item->banque->image_url;
-    }
 
+
+    }
+    $depense = [];
+    foreach ($montant as $key =>$item){
+      $depense[$key] = Banque::where('id',$item->banque->id)->first()->depensesTotal();
+    }
     return response()->json([
       'transaction' => $montant,
+      'tab' => $tableu,
+      'dep' => $depense
     ]);
   }
 }
