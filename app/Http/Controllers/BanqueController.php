@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Banque;
 use App\Models\Pays;
 use Illuminate\Http\Request;
+use Illuminate\Http\Response;
 use Illuminate\Support\Facades\File;
 use App\Traits\ImageUpload;
 class BanqueController extends Controller
@@ -150,12 +151,22 @@ class BanqueController extends Controller
     $banque = Banque::where('id', $id)->first();
 
 
-    if (File::exists(public_path($banque->image_url))) {
-      File::delete(public_path($banque->image_url));
-      $banque->delete();
-    } else {
-      $banque->delete();
-    }
+   if ($banque->transactions->isEmpty() and $banque->depenses->isEmpty()) {
+
+     if (File::exists(public_path($banque->image_url))) {
+       File::delete(public_path($banque->image_url));
+       $banque->delete();
+     } else {
+       $banque->delete();
+     }
+   }else {
+
+     return response()->json(true);
+
+   }
+
+
+
   }
 
   public function listeBanque(Request $request)

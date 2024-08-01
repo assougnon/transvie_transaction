@@ -152,6 +152,7 @@ mix.js('resources/js/laravel-user-management.js', 'public/js/');
 mix.js('resources/js/adherant-management.js', 'public/js/');
 mix.js('resources/js/banque-management.js', 'public/js/');
 mix.js('resources/js/transaction-list.js', 'public/js/');
+mix.js('resources/js/depenses-list.js', 'public/js/');
 mix.js('resources/js/register-user.js', 'public/js/');
 mix.js('resources/js/userTransaction.js', 'public/js/');
 mix.js('resources/js/adherent-form.js', 'public/js/');

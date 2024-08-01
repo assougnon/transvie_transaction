@@ -324,8 +324,28 @@ $(function () {
         $.ajax({
           type: 'DELETE',
           url: "".concat(baseUrl, "banques/").concat(user_id),
-          success: function success() {
-            dt_user.draw();
+          success: function success(res) {
+            console.log(res);
+            if (res === true) {
+              Swal.fire({
+                title: 'Impossible',
+                text: 'Veuillez Supprimer toutes les transactions  et dépenses liées à la banque !',
+                icon: 'error',
+                customClass: {
+                  confirmButton: 'btn btn-success'
+                }
+              });
+            } else {
+              Swal.fire({
+                icon: 'success',
+                title: 'Supprimer!',
+                text: 'La Banque a bien été Supprimée !',
+                customClass: {
+                  confirmButton: 'btn btn-success'
+                }
+              });
+              dt_user.draw();
+            }
           },
           error: function error(_error) {
             console.log(_error);
@@ -333,14 +353,6 @@ $(function () {
         });
 
         // success sweetalert
-        Swal.fire({
-          icon: 'success',
-          title: 'Supprimer!',
-          text: 'La Banque a bien été Supprimée !',
-          customClass: {
-            confirmButton: 'btn btn-success'
-          }
-        });
       } else if (result.dismiss === Swal.DismissReason.cancel) {
         Swal.fire({
           title: 'Annuler',

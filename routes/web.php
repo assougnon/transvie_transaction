@@ -7,6 +7,7 @@ use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\FactureTransactionController;
 use App\Http\Controllers\RemiseController;
 use App\Http\Controllers\TransactionController;
+use App\Http\Controllers\TransactionSortieController;
 use App\Livewire\UserInscription;
 use App\Livewire\UserProfil;
 use Illuminate\Support\Facades\Route;
@@ -387,16 +388,22 @@ Route::group(['middleware' => ['permission:manage users']], function () {
 });
 Route::group(['middleware' => ['permission:show adherent']], function () {
   Route::get('adherant', [AdherantController::class, 'index'])->name('adherant-liste');
+  Route::get('adherant/list',[AdherantController::class,'adherant']);
 });
 
 
 Route::group(['middleware' => ['permission:add adherent']], function () {
   Route::get('adherant/create',[AdherantController::class,'create'])->name('adherant-ajout');
+  Route::post('adherant',[AdherantController::class,'store'])->name('adherant');
 });
 
-Route::post('adherant',[AdherantController::class,'store'])->name('adherant');
-Route::post('adherant/update',[AdherantController::class,'update']);
-Route::get('adherant/list',[AdherantController::class,'adherant']);
+Route::group(['middleware' => ['permission:edit adherent']], function () {
+  Route::post('adherant/update',[AdherantController::class,'update']);
+});
+
+
+
+
 
 Route::group(['middleware' => ['permission:edit adherent']], function () {
   Route::get('adherant/{id}/edit',[AdherantController::class,'edit']);
@@ -420,6 +427,17 @@ Route::group(['middleware' => ['permission:show transaction']], function () {
 Route::group(['middleware' => ['permission:add transaction']], function () {
   Route::get('transaction-list/create',[TransactionController::class,'create'])->name('transaction-create');
 });
+
+Route::group(['middleware' => ['permission:manage remises']], function () {
+
+  Route::resource('remise', RemiseController::class);
+
+  Route::get('remises-liste',[RemiseController::class,'liste']);
+  Route::get('images-remise',[RemiseController::class,'imageRemise']);
+});
+
+
+
 Route::middleware([
     'auth:sanctum',
     config('jetstream.auth_session'),
@@ -431,27 +449,13 @@ Route::middleware([
   Route::get('/userprofil', UserProfil::class)->name('userprofil');
   Route::get('/usermanagement', \App\Livewire\UserManagement::class)->name('usermanagement');
 
-Route::resource('remise', RemiseController::class);
-Route::get('remises-liste',[RemiseController::class,'liste']);
-Route::get('images-remise',[RemiseController::class,'imageRemise']);
-
-
 
 
   Route::get('adherant/pays',[AdherantController::class,'selectPays']);
 
 
 
-
-  Route::get('transaction/management',[TransactionController::class,'transctionManagement']);
-  Route::get('transaction/user-management/{user}',[UserViewAccount::class,'userTransactionManagement']);
-
-  Route::get('transaction',[TransactionController::class,'index'])->name('transaction-list');
-
-
-
-
-
+  Route::redirect('/user/profile','/userprofil');
 
 });
 
@@ -461,19 +465,32 @@ Route::group(['middleware' => ['permission:add banque']], function () {
 
 Route::group(['middleware' => ['permission:show banque']], function () {
   Route::get('banques', [BanqueController::class,'index'])->name('banques-liste');
+  Route::get('banque/list',[BanqueController::class,'listeBanque'])->name('bank-list');
 });
 
 
-Route::get('banque/list',[BanqueController::class,'listeBanque'])->name('bank-list');
 
+Route::group(['middleware' => ['permission:edit banque']], function () {
 Route::post('banque/update',[BanqueController::class,'updateBanque'])->name('bank-update');
-Route::get('facture/transaction/{id}',[FactureTransactionController::class,'index']);
-Route::get('transaction/{id}',[FactureTransactionController::class,'edit']);
-Route::post('transaction-update',[FactureTransactionController::class,'update']);
+});
+
+Route::group(['middleware' => ['permission:show transaction']], function () {
+Route::get('transaction/management',[TransactionController::class,'transctionManagement']);
+  Route::get('transaction/user-management/{user}',[UserViewAccount::class,'userTransactionManagement']);
+  Route::get('transaction',[TransactionController::class,'index'])->name('transaction-list');
+  Route::get('facture/transaction/{id}',[FactureTransactionController::class,'index']);
+});
+
+Route::group(['middleware' => ['permission:edit transaction']], function () {
+  Route::get('transaction/{id}',[FactureTransactionController::class,'edit']);
+  Route::post('transaction-update',[FactureTransactionController::class,'update']);
+});
+
+Route::group(['middleware' => ['permission:delete transaction']], function () {
 Route::get('transaction-delete/{id}',[FactureTransactionController::class,'delete']);
+});
 
 
-Route::redirect('/user/profile','/userprofil');
 
 
 
@@ -482,7 +499,7 @@ Route::get('montant/pays',[DashboardController::class,'transactionPays']);
 Route::get('statistiques/pays/{pays}',[DashboardController::class,'statistiques']);
 Route::get('statistiques/mois/{mois}',[DashboardController::class,'donutData']);
 Route::get('statistiques/agence/senegal',[DashboardController::class,'montantDeChaqueAgence']);
-Route::get('statistiques/banque/{banque}',[DashboardController::class,'banqueMontantTotal']);
+Route::get('statistiques/banque/{banque}',[DashboardController::class,'banqueMfontantTotal']);
 
 
 
@@ -492,16 +509,24 @@ Route::get('register', [RegisteredUserController::class, 'create'])
 Route::post('register', [RegisteredUserController::class, 'store'])
   ->middleware(['auth']);
 
-Route::get('inscription',[CreateUserController::class,'index'])->name('inscription');
-Route::post('inscription',[CreateUserController::class,'store']);
+Route::get('inscription',[CreateUserController::class,'index'])->name('inscription')->middleware(['auth']);
+Route::post('inscription',[CreateUserController::class,'store'])->middleware(['auth']);
 
-Route::get('mailtransaction', function (){
+Route::get('add/depense',[TransactionSortieController::class,'create'])->name('depenses');
+Route::get('depenses',[TransactionSortieController::class,'index'])->name('depenses-liste');
+Route::get('show/depenses',[TransactionSortieController::class,'show']);
+Route::post('create/depense',[TransactionSortieController::class,'store']);
+Route::get('edit/depense/{id}',[TransactionSortieController::class,'edit']);
+Route::patch('update/depense/{id}',[TransactionSortieController::class,'update']);
+Route::get('delete/depense/{id}',[TransactionSortieController::class,'destroy']);
+
+/*Route::get('mailtransaction', function (){
 $user = \App\Models\User::find(1);
 $transction = \App\Models\Transaction::find(98);
 
 
   return new \App\Mail\TransactionImpayee($transction);
-});
+});*/
 /*Route::resources(['adherant' => AdherantController::class]);*/
 
 

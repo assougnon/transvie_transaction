@@ -344,7 +344,7 @@ class DashboardController extends Controller
 
     $tableu = [];
     $montant = Transaction::where('pays_id', $ba)
-      ->whereMonth('created_at', Carbon::now()->month)
+    ->where('statut','Terminee')
       ->whereYear('created_at', Carbon::now()->year)
       ->select('banque_id', DB::raw('SUM(montant) as total_amount'))
       ->groupBy('banque_id')
@@ -357,8 +357,6 @@ class DashboardController extends Controller
 
     return response()->json([
       'transaction' => $montant,
-
-
     ]);
   }
 }

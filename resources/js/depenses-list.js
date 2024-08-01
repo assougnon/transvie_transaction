@@ -1,42 +1,30 @@
-/**
- * Page User List
- */
-
 'use strict';
-
-// Datatable (jquery)
 $(function () {
-  // Variable declaration for table
-  var dt_user_table = $('.datatables-users'),
-    userView = baseUrl ,
-  offCanvasForm = $('#offcanvasAddUser');
 
-
-
-  // ajax setup
+  var dt_user_table = $('.depenses-list-table');
+  var depnseCreate = baseUrl + 'add/depense';
   $.ajaxSetup({
     headers: {
       'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
     }
   });
 
-  // Users datatable
   if (dt_user_table.length) {
     var dt_user = dt_user_table.DataTable({
       processing: true,
       serverSide: true,
       ajax: {
-        url: baseUrl + 'banque/list'
+        url: baseUrl + 'show/depenses'
       },
       columns: [
         // columns according to JSON
         { data: '' },
         { data: 'id' },
-        { data: 'nom' },
-        { data: 'telephone' },
-        { data: 'adresse' },
-        { data: 'pays_id' },
-        { data: 'action' }
+        { data: 'montant' },
+        { data: 'banque_id' },
+        { data: 'description' },
+        { data: 'actions' }
+
       ],
       columnDefs: [
         {
@@ -61,56 +49,23 @@ $(function () {
         {
           // User full name
           targets: 2,
-          responsivePriority: 4,
+          responsivePriority: 3,
           render: function (data, type, full, meta) {
-
-
-            // For Avatar badge
-            var stateNum = Math.floor(Math.random() * 6);
-            var states = ['success', 'danger', 'warning', 'info', 'dark', 'primary', 'secondary'];
-            var $state = states[stateNum],
-              $name = full['nom'],
-              $photo = full['photo'],
-              $initials = $name.match(/\b\w/g) || [],
-              $output;
-          if($photo){
-            $output = `<span class="avatar-initial rounded-circle "> <img src="${$photo}" alt="" class="rounded-circle"></span>`;
-          }else{
-
-            $initials = (($initials.shift() || '') + ($initials.pop() || '')).toUpperCase();
-            $output = '<span class="avatar-initial rounded-circle bg-label-' + $state + '">' + $initials + '</span>';
-
-          }
+            var $montant = full['montant'];
 
 
 
 
-            // Creates full output for row
-            var $row_output =
-              '<div class="d-flex justify-content-start align-items-center user-name">' +
-              '<div class="avatar-wrapper">' +
-              '<div class="avatar avatar-sm me-3">' +
-              $output +
-              '</div>' +
-              '</div>' +
-              '<div class="d-flex flex-column">' +
-              '<a href="' +
-              'banques/'+ full['id'] +
-              '" class="text-body text-truncate"><span class="fw-medium">' +
-              $name +
-              '</span></a>' +
-              '</div>' +
-              '</div>';
-            return $row_output;
+            return $montant;
           }
         },
         {
-          // User email
+
           targets: 3,
           render: function (data, type, full, meta) {
-            var $telephone = full['telephone'];
+            var $description = full['description'];
 
-            return '<span class="user-email">' + $telephone + '</span>';
+            return '<span class="">' + $description + '</span>';
           }
         },
         {
@@ -118,32 +73,14 @@ $(function () {
           targets: 4,
           responsivePriority: 4,
           render: function (data, type, full, meta) {
-            var $pays = full['adresse'];
+            var $banque = full['banque'];
 
 
-            // Creates full output for row
-            var $row_output =
-              '<div class="d-flex justify-content-start align-items-center user-name">' +
 
-              '<div class="d-flex flex-column">' +
-              '<span class="fw-medium">' +
-              $pays +
-              '</span>' +
-              '</div>' +
-              '</div>';
-            return $row_output;
+            return `${$banque}`;
           }
         },
-        {
-          targets: 5,
-          className: 'text-center',
-          render: function(data, type, full, meta){
 
-            let $adresse = full['pays'];
-            return `${$adresse}`;
-          }
-        }
-        ,
 
         {
           // Actions
@@ -154,9 +91,8 @@ $(function () {
           render: function (data, type, full, meta) {
             return (
               '<div class="d-inline-block text-nowrap">' +
-              `<button class="btn btn-sm btn-icon edit-record" data-id="${full['id']}" ><a href="banques/${full['id']}"><i class="ti ti-edit"></i></a></button>` +
+              `<button class="btn btn-sm btn-icon edit-record" data-id="${full['id']}" ><a href="edit/depense/${full['id']}"><i class="ti ti-edit"></i></a></button>` +
               `<button class="btn btn-sm btn-icon delete-record" data-id="${full['id']}"><i class="ti ti-trash"></i></button>` +
-
               '</div>'
             );
           }
@@ -314,7 +250,11 @@ $(function () {
             }
           ]
         },
+        {
+          text: '<i class="ti ti-plus me-0 me-sm-1"></i><span class="d-none d-sm-inline-block add-depense">Ajouter une dépense</span>',
+          className: 'add-new btn btn-primary',
 
+        }
       ],
       // For responsive popup
       responsive: {
@@ -330,18 +270,18 @@ $(function () {
             var data = $.map(columns, function (col, i) {
               return col.title !== '' // ? Do not show row in modal popup if title is blank (for check box)
                 ? '<tr data-dt-row="' +
-                    col.rowIndex +
-                    '" data-dt-column="' +
-                    col.columnIndex +
-                    '">' +
-                    '<td>' +
-                    col.title +
-                    ':' +
-                    '</td> ' +
-                    '<td>' +
-                    col.data +
-                    '</td>' +
-                    '</tr>'
+                col.rowIndex +
+                '" data-dt-column="' +
+                col.columnIndex +
+                '">' +
+                '<td>' +
+                col.title +
+                ':' +
+                '</td> ' +
+                '<td>' +
+                col.data +
+                '</td>' +
+                '</tr>'
                 : '';
             }).join('');
 
@@ -352,26 +292,13 @@ $(function () {
     });
   }
 
-  // Delete Record
-
-
-  // Filter form control to default size
-  // ? setTimeout used for multilingual table initialization
-  setTimeout(() => {
-    $('.dataTables_filter .form-control').removeClass('form-control-sm');
-    $('.dataTables_length .form-select').removeClass('form-select-sm');
-  }, 300);
-
-  // validating form and updating user's data
+  $('.add-depense').on('click', function () {
+    window.location.href = baseUrl + "add/depense";
+  });
 
   $(document).on('click', '.delete-record', function () {
-    var user_id = $(this).data('id'),
-      dtrModal = $('.dtr-bs-modal.show');
+    var depense_id = $(this).data('id');
 
-    // hide responsive modal in small screen
-    if (dtrModal.length) {
-      dtrModal.modal('hide');
-    }
 
     // sweetalert for confirmation of delete
     Swal.fire({
@@ -389,30 +316,10 @@ $(function () {
       if (result.value) {
         // delete the data
         $.ajax({
-          type: 'DELETE',
-          url: `${baseUrl}banques/${user_id}`,
-          success: function (res) {
-            console.log(res);
-            if (res === true){
-              Swal.fire({
-                title: 'Impossible',
-                text: 'Veuillez Supprimer toutes les transactions  et dépenses liées à la banque !',
-                icon: 'error',
-                customClass: {
-                  confirmButton: 'btn btn-success'
-                }
-              });
-            }else{
-              Swal.fire({
-                icon: 'success',
-                title: 'Supprimer!',
-                text: 'La Banque a bien été Supprimée !',
-                customClass: {
-                  confirmButton: 'btn btn-success'
-                }
-              });
-              dt_user.draw();
-            }
+          type: 'GET',
+          url: `${baseUrl}delete/depense/${depense_id}`,
+          success: function () {
+            dt_user.draw();
           },
           error: function (error) {
             console.log(error);
@@ -420,11 +327,18 @@ $(function () {
         });
 
         // success sweetalert
-
+        Swal.fire({
+          icon: 'success',
+          title: 'Supprimer!',
+          text: 'La Dépense  a bien été Supprimée !',
+          customClass: {
+            confirmButton: 'btn btn-success'
+          }
+        });
       } else if (result.dismiss === Swal.DismissReason.cancel) {
         Swal.fire({
           title: 'Annuler',
-          text: 'L\'utilisateur n\'a pas été supprimé!',
+          text: 'La Dépense n\'a pas été supprimé!',
           icon: 'error',
           customClass: {
             confirmButton: 'btn btn-success'
@@ -433,51 +347,4 @@ $(function () {
       }
     });
   });
-
-
-
-  $(document).on('click', '.edit-record', function () {
-    var banque_id = $(this).data('id'),
-      dtrModal = $('.dtr-bs-modal.show');
-
-    // hide responsive modal in small screen
-    if (dtrModal.length) {
-      dtrModal.modal('hide');
-    }
-
-
-
-    // get data
-    $.get(`${baseUrl}banques\/${banque_id}\/edit`, function (data) {
-
-
-      $('#user_id').val(data.id);
-      $('#add-user-fullname').val(data.nom);
-
-      $('#user-contry').val(data.pays_id);
-
-      $('#user-adresse').val(data.adresse);
-      $('#add-user-contact').val(data.telephone);
-
-    });
-  });
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 });
-
-

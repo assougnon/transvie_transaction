@@ -82,6 +82,30 @@ $configData = Helper::appClasses();
     </li>
     @endif
     @endforeach
+
+    <li class="menu-item">
+      <a href="" class="menu-link menu-toggle" target="_blank">
+
+        <i class=" menu-icon fa-solid fa-money-bill"></i>
+        <div>Dépense</div>
+        <div class="badge rounded-pill ms-auto"></div>
+      </a>
+      <ul class="menu-sub">
+
+
+        <li class="menu-item ">
+          <a href="{{env('APP_URL','http://127.0.0.1:8000')}}/add/depense" class="menu-link">
+            <div>Ajouter une dépense</div>
+          </a>
+        </li>
+        <li class="menu-item ">
+          <a href="{{env('APP_URL','http://127.0.0.1:8000')}}/depenses" class="menu-link">
+            <div>Liste des dépenses</div>
+          </a>
+        </li>
+
+      </ul>
+    </li>
   </ul>
 
 </aside>

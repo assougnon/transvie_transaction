@@ -91,7 +91,7 @@ class FactureTransactionController extends Controller
     event(new TransactionUpdated($transac));
     if($old_transaction->statut !== $request->statut){
       if($transac->statut === 'Terminee'){
-       /* $sms  = new SmsSender();
+      /* $sms  = new SmsSender();
 
         $sms->sendSms($transac->adherant->telephone,'Hello TRANSVIE  vous informe que  votre paiement de '.$transac->montant.' CFA a été validé. Transaction numero :'.$transac->numero);*/
 
