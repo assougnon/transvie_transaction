@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Events\TransactionCreated;
+use App\Mail\TransactionRecu;
 use App\Models\Adherant;
 use App\Models\Banque;
 use App\Models\Transaction;
@@ -10,6 +11,7 @@ use App\Models\User;
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Number;
 
 class TransactionController extends Controller
@@ -207,6 +209,9 @@ class TransactionController extends Controller
       ]);
 
       event( new TransactionCreated($transac));
+      if ($transac->type === 'Cheque'){
+        Mail::to($adherent)->send(new TransactionRecu($transac));
+      }
 
       return redirect()->route('transaction-list');
     }
@@ -253,5 +258,116 @@ class TransactionController extends Controller
         return '0'.$id.now()->month.now()->year.auth()->user()->shortcode;
 
       }
+    }
+
+    public function transactionsGenerales(Request $request)
+    {
+
+      $columns = [
+        1 => 'numero',
+        2 => 'adherant_prenom',
+        3 => 'montant',
+        4 => 'type',
+        5 => 'statut',
+        6 => 'note',
+        7 => 'created_at',
+      ];
+
+      $search = [];
+      $id = Auth::user()->agence->id;
+
+      $totalData = Transaction::all()->count();
+
+      $totalFiltered = $totalData;
+
+      $limit = $request->input('length');
+      $start = $request->input('start');
+      $order = $columns[$request->input('order.0.column')];
+      $dir = $request->input('order.0.dir');
+
+      if (empty($request->input('search.value'))) {
+        $users = Transaction::offset($start)
+          ->limit($limit)
+          ->orderBy($order, $dir)
+          ->get();
+      } else {
+        $search = $request->input('search.value');
+
+        $users = Transaction::where('agence_id',$id)
+          ->where(function ($query) use ($search) {
+            return $query->orWhere('id', 'LIKE', "%{$search}%")
+              ->orWhere('numero', 'LIKE', "%{$search}%")
+              ->orWhere('type', 'LIKE', "%{$search}%")
+              ->orWhere('statut', 'LIKE', "%{$search}%")
+              ->orWhere('adherant_prenom', 'LIKE', "%{$search}%");
+          })->offset($start)
+          ->limit($limit)
+          ->orderBy($order, $dir)
+          ->get();
+
+        $totalFiltered = Transaction::where('agence_id',$id)
+          ->orWhere('id', 'LIKE', "%{$search}%")
+          ->orWhere('numero', 'LIKE', "%{$search}%")
+          ->orWhere('type', 'LIKE', "%{$search}%")
+          ->orWhere('statut', 'LIKE', "%{$search}%")
+          ->orWhere('adherant_prenom', 'LIKE', "%{$search}%")
+          ->count();
+      }
+
+      $data = [];
+
+      if (!empty($users)) {
+        // providing a dummy id instead of database ids
+        $ids = $start;
+
+        foreach ($users as $user) {
+          $nestedData['numero'] = $user->numero;
+          $nestedData['prenom'] = $user->adherant_prenom.' '.$user->adherant_nom;
+          $nestedData['banque'] = $user->banque->nom;
+          $nestedData['telephone'] = $user->telephone;
+          $nestedData['montant'] = $user->montant;
+          $nestedData['type'] = $user->type;
+          $nestedData['statut'] = $user->statut;
+          $nestedData['note'] = $user->note;
+          $nestedData['created_at'] = $user->created_at;
+
+          $data[] = $nestedData;
+        }
+      }
+
+      if ($data) {
+        return response()->json([
+          'draw' => intval($request->input('draw')),
+          'recordsTotal' => intval($totalData),
+          'recordsFiltered' => intval($totalFiltered),
+          'code' => 200,
+          'data' => $data,
+        ]);
+      } else {
+        return response()->json([
+          'message' => 'Internal Server Error',
+          'code' => 500,
+          'data' => [],
+        ]);
+      }
+    }
+
+    public function transactionsGeneralesIndex()
+    {
+
+      $clients = Adherant::all()->count();
+      $facture = Transaction::all()->count();
+      $price = Transaction::all()->sum('montant');
+      $cfa = $price   ;
+      $impaye = Transaction::where('statut','Impayee')
+        ->get()->sum('montant');
+
+      return view('transactions.transaction-generale',[
+        'clients' =>$clients,
+        'factures'=> $facture,
+        'total'=>$cfa,
+        'impayees' =>$impaye
+      ]);
+
     }
 }

@@ -61,7 +61,7 @@
 
   <div class="table-responsive">
     <table class="table m-0">
-      <thead class="thead-dark">
+      <thead class="thead-light">
       <tr>
         <th>TYPE</th>
         <th>Description</th>
@@ -81,12 +81,7 @@
     </table>
   </div>
 
-  <div class="row">
-    <div class="col-12">
-      <span class="fw-medium">Note:</span>
-      <span> Thank You!</span>
-    </div>
-  </div>
+
 </div>
 
 </body>

@@ -255,6 +255,8 @@ Echo.channel('transaction-created')
    updateAgenceChart();
   });
 
+
+
 Echo.channel('transaction-updated')
   .listen('.transaction.updated',(event)=>{
 

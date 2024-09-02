@@ -27,6 +27,7 @@ class AdherantController extends Controller
 
   public function adherant(Request $request)
   {
+    $user = Auth::user();
 
     $columns = [
       1 => 'id',
@@ -39,7 +40,9 @@ class AdherantController extends Controller
       8 => 'agence',
     ];
     $search = [];
-    $totalData = Adherant::count();
+    $totalData = Adherant::where('agence_id',$user->agence->id)
+      ->get()
+    ->count();
 
     $totalFiltered = $totalData;
 
@@ -48,7 +51,8 @@ class AdherantController extends Controller
     $order = $columns[$request->input('order.0.column')];
     $dir = $request->input('order.0.dir');
     if (empty($request->input('search.value'))) {
-      $adherants = Adherant::offset($start)
+      $adherants = Adherant::where('agence_id',$user->agence->id)
+      ->offset($start)
         ->limit($limit)
         ->orderBy($order, $dir)
         ->get();

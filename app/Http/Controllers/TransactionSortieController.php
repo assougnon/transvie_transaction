@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Events\DepenseCreee;
 use App\Models\Banque;
 use App\Models\Transacsortie;
 use Carbon\Carbon;
@@ -58,6 +59,8 @@ class TransactionSortieController extends Controller
         'description' => $request->description,
         'banque_id' => $request->banque_id,
       ]);
+
+
 
       return redirect(route('depenses-liste'));
     }
@@ -179,6 +182,7 @@ class TransactionSortieController extends Controller
           'banque_id' => $request->banque_id,
         ]
       );
+
       return redirect(route('depenses-liste'));
 
     }
@@ -188,7 +192,9 @@ class TransactionSortieController extends Controller
      */
     public function destroy(string $id)
     {
+
         $depense = Transacsortie::where('id',$id)->first();
         $depense->delete();
+
     }
 }

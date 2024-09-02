@@ -20,20 +20,29 @@ class PermissionsDemoSeeder extends Seeder
       app()[PermissionRegistrar::class]->forgetCachedPermissions();
       Permission::create(['name' => 'add adherent']);
       Permission::create(['name' => 'add banque']);
+      Permission::create(['name' => 'add depense']);
       Permission::create(['name' => 'add transaction']);
       Permission::create(['name' => 'delete adherent']);
       Permission::create(['name' => 'delete banque']);
       Permission::create(['name' => 'delete transaction']);
+      Permission::create(['name' => 'delete depense']);
       Permission::create(['name' => 'edit adherent']);
       Permission::create(['name' => 'edit banque']);
       Permission::create(['name' => 'edit transaction']);
+      Permission::create(['name' => 'edit depense']);
       Permission::create(['name' => 'manage remises']);
       Permission::create(['name' => 'delete remises']);
       Permission::create(['name' => 'manage users']);
+      Permission::create(['name' => 'manage bank']);
+      Permission::create(['name' => 'manage transaction']);
+      Permission::create(['name' => 'manage adherent']);
+      Permission::create(['name' => 'manage dashbord']);
+      Permission::create(['name' => 'manage depense']);
       Permission::create(['name' => 'show adherent']);
       Permission::create(['name' => 'show banque']);
       Permission::create(['name' => 'show dashboard']);
       Permission::create(['name' => 'show transaction']);
+      Permission::create(['name' => 'show depense']);
 
       $role = Role::create(['name' => 'super-admin']);
       $role->givePermissionTo(Permission::all());
@@ -45,7 +54,7 @@ class PermissionsDemoSeeder extends Seeder
       $role_3->givePermissionTo(Permission::all());
 
       $role_4 = Role::create(['name' =>'manager']);
-      $role_4->givePermissionTo(['add adherent','add transaction','delete adherent','delete transaction','edit transaction','edit adherent','manage remises','show adherent','show transaction','delete remises']);
+      $role_4->givePermissionTo(['add adherent','add transaction','delete adherent','edit adherent','manage remises','show adherent','show transaction','delete remises']);
 
       $role_5 = Role::create(['name' => 'comptable']);
       $role_5->givePermissionTo(['add transaction','show transaction','manage remises']);

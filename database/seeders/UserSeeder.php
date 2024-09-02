@@ -24,7 +24,7 @@ class UserSeeder extends Seeder
         'adresse' => 'Ouest foire tally wally',
         'telephone' => '00221778117235',
         'email' => 'assougnonleon@gmail.com',
-        'password' => Hash::make('machine213**'),
+        'password' => Hash::make('Machine2024**'),
       ]);
       $user = User::where('email','assougnonleon@gmail.com')->first();
       $user->assignRole('super-admin');

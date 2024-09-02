@@ -185,8 +185,7 @@ Route::get('/layouts/content-navbar', [ContentNavbar::class, 'index'])->name('la
 Route::get('/layouts/content-nav-sidebar', [ContentNavSidebar::class, 'index'])->name('layouts-content-nav-sidebar');
 //Route::get('/layouts/navbar-full', [NavbarFull::class, 'index'])->name('layouts-navbar-full');
 //Route::get('/layouts/navbar-full-sidebar', [NavbarFullSidebar::class, 'index'])->name('layouts-navbar-full-sidebar');
-Route::get('/layouts/horizontal', [Horizontal::class, 'index'])->name('dashboard-analytics');
-Route::get('/layouts/vertical', [Vertical::class, 'index'])->name('dashboard-analytics');
+
 Route::get('/layouts/without-menu', [WithoutMenu::class, 'index'])->name('layouts-without-menu');
 Route::get('/layouts/without-navbar', [WithoutNavbar::class, 'index'])->name('layouts-without-navbar');
 Route::get('/layouts/fluid', [Fluid::class, 'index'])->name('layouts-fluid');
@@ -272,9 +271,9 @@ Route::get('/auth/register-cover', [RegisterCover::class, 'index'])->name('auth-
 Route::get('/auth/register-multisteps', [RegisterMultiSteps::class, 'index'])->name('auth-register-multisteps');
 Route::get('/auth/verify-email-basic', [VerifyEmailBasic::class, 'index'])->name('auth-verify-email-basic');
 Route::get('/auth/verify-email-cover', [VerifyEmailCover::class, 'index'])->name('auth-verify-email-cover');
-Route::get('/auth/reset-password-basic', [ResetPasswordBasic::class, 'index'])->name('auth-reset-password-basic');
+/*Route::get('/auth/reset-password-basic', [ResetPasswordBasic::class, 'index'])->name('auth-reset-password-basic');
 Route::get('/auth/reset-password-cover', [ResetPasswordCover::class, 'index'])->name('auth-reset-password-cover');
-Route::get('/auth/forgot-password-basic', [ForgotPasswordBasic::class, 'index'])->name('auth-reset-password-basic');
+Route::get('/auth/forgot-password-basic', [ForgotPasswordBasic::class, 'index'])->name('auth-reset-password-basic');*/
 Route::get('/auth/forgot-password-cover', [ForgotPasswordCover::class, 'index'])->name('auth-forgot-password-cover');
 Route::get('/auth/two-steps-basic', [TwoStepsBasic::class, 'index'])->name('auth-two-steps-basic');
 Route::get('/auth/two-steps-cover', [TwoStepsCover::class, 'index'])->name('auth-two-steps-cover');
@@ -418,9 +417,6 @@ Route::group(['middleware' => ['permission:add transaction']], function () {
 });
 
 
-Route::group(['middleware' => ['permission:show transaction']], function () {
-  Route::get('transaction-list',[TransactionController::class,'index'])->name('transaction-list');
-});
 
 
 
@@ -490,6 +486,8 @@ Route::group(['middleware' => ['permission:delete transaction']], function () {
 Route::get('transaction-delete/{id}',[FactureTransactionController::class,'delete']);
 });
 
+Route::get('transactions/all',[TransactionController::class,'transactionsGeneralesIndex']);
+Route::get('transactions/show/all',[TransactionController::class,'transactionsGenerales']);
 
 
 
@@ -519,6 +517,12 @@ Route::post('create/depense',[TransactionSortieController::class,'store']);
 Route::get('edit/depense/{id}',[TransactionSortieController::class,'edit']);
 Route::patch('update/depense/{id}',[TransactionSortieController::class,'update']);
 Route::get('delete/depense/{id}',[TransactionSortieController::class,'destroy']);
+
+
+
+
+
+
 
 /*Route::get('mailtransaction', function (){
 $user = \App\Models\User::find(1);

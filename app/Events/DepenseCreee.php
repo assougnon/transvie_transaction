@@ -30,7 +30,12 @@ class DepenseCreee
     public function broadcastOn(): array
     {
         return [
-            new PrivateChannel('channel-name'),
+            new PrivateChannel('depense-creee'),
         ];
     }
+
+  public function broadcastAs(): string
+  {
+    return 'depense.creee';
+  }
 }
